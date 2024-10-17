@@ -1,0 +1,182 @@
+[
+  {
+    "Food ID": "C1",
+    "Food Name and Description": "Arrozcaldo",
+    "Energy, calculated": 235.976,
+    "Density, g/ml": 1.05
+  },
+  {
+    "Food ID": "C2",
+    "Food Name and Description": "Balbacua",
+    "Energy, calculated": 130.339,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C3",
+    "Food Name and Description": "Bulalo",
+    "Energy, calculated": 89.007,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C4",
+    "Food Name and Description": "Champorado",
+    "Energy, calculated": 97,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C5",
+    "Food Name and Description": "Chicken Adobo",
+    "Energy, calculated": 221.802,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C6",
+    "Food Name and Description": "Chicken Inasal",
+    "Energy, calculated": 301.009,
+    "Density, g/ml": 1.3
+  },
+  {
+    "Food ID": "C7",
+    "Food Name and Description": "Chicken Tinola",
+    "Energy, calculated": 118.05,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C8",
+    "Food Name and Description": "Daing na Bangus",
+    "Energy, calculated": 142.908,
+    "Density, g/ml": 1.3
+  },
+  {
+    "Food ID": "C9",
+    "Food Name and Description": "Dinuguan",
+    "Energy, calculated": 210.586,
+    "Density, g/ml": 1.3
+  },
+  {
+    "Food ID": "C10",
+    "Food Name and Description": "Halo-halo",
+    "Energy, calculated": 180.48,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C11",
+    "Food Name and Description": "Kanin",
+    "Energy, calculated": 129,
+    "Density, g/ml": 1.3
+  },
+  {
+    "Food ID": "C12",
+    "Food Name and Description": "Kansi",
+    "Energy, calculated": 93.058,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C13",
+    "Food Name and Description": "Kare-kare",
+    "Energy, calculated": 271.756,
+    "Density, g/ml": 1.3
+  },
+  {
+    "Food ID": "C14",
+    "Food Name and Description": "Kinilaw",
+    "Energy, calculated": 79.007,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C15",
+    "Food Name and Description": "Kutsinta",
+    "Energy, calculated": 166,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C16",
+    "Food Name and Description": "La Paz Batchoy",
+    "Energy, calculated": 143.81,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C17",
+    "Food Name and Description": "Lumpiang shanghai",
+    "Energy, calculated": 285,
+    "Density, g/ml": 1.3
+  },
+  {
+    "Food ID": "C18",
+    "Food Name and Description": "Pancit Bihon",
+    "Energy, calculated": 156.867,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C19",
+    "Food Name and Description": "Pancit Molo",
+    "Energy, calculated": 93,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C20",
+    "Food Name and Description": "Pandesal",
+    "Energy, calculated": 330,
+    "Density, g/ml": 0.5
+  },
+  {
+    "Food ID": "C21",
+    "Food Name and Description": "Pastil",
+    "Energy, calculated": 248.557,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C22",
+    "Food Name and Description": "Pinakbet",
+    "Energy, calculated": 53.54,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C23",
+    "Food Name and Description": "Pork Adobo",
+    "Energy, calculated": 334.886,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C24",
+    "Food Name and Description": "Pork Sinigang",
+    "Energy, calculated": 79.864,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C25",
+    "Food Name and Description": "Pork Sisig",
+    "Energy, calculated": 188.176,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C26",
+    "Food Name and Description": "Pyanggang",
+    "Energy, calculated": 237.947,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C27",
+    "Food Name and Description": "Satti",
+    "Energy, calculated": 97.097,
+    "Density, g/ml": 1.2
+  },
+  {
+    "Food ID": "C28",
+    "Food Name and Description": "Shrimp Sinigang",
+    "Energy, calculated": 59.025,
+    "Density, g/ml": 1
+  },
+  {
+    "Food ID": "C29",
+    "Food Name and Description": "Tiyula Itum",
+    "Energy, calculated": 200.456,
+    "Density, g/ml": 1.1
+  },
+  {
+    "Food ID": "C30",
+    "Food Name and Description": "Tortang Talong",
+    "Energy, calculated": 57.162,
+    "Density, g/ml": 1.3
+  }
+]

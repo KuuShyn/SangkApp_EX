@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.thesis.sangkapp_ex.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.thesis.sangkapp_ex.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_camera"
+        android:name="com.thesis.sangkapp_ex.ui.camera.CameraFragment"
+        android:label="@string/camera"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_photoFragment"
+            app:destination="@id/photoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photoFragment"
+        android:name="com.thesis.sangkapp_ex.ui.photo.PhotoFragment"
+        android:label="@string/captured_photo"
+        tools:layout="@layout/fragment_photo">
+        <argument
+            android:name="imageUri"
+            app:argType="android.net.Uri" />
+    </fragment>
+
+    <!-- With this nested navigation graph -->
+    <fragment
+        android:id="@+id/nav_recipe"
+        android:name="com.thesis.sangkapp_ex.ui.recipe.RecipeAnalyzerFragment"
+        android:label="@string/recipey"
+        tools:layout="@layout/fragment_recipe_analyzer">
+        <action
+            android:id="@+id/action_nav_recipe_to_recipeInfoFragment"
+            app:destination="@id/recipeInfoFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/recipeInfoFragment"
+        android:name="com.thesis.sangkapp_ex.ui.recipe.RecipeInfoFragment"
+        android:label="Recipe Info">
+        <argument
+            android:name="selectedRecipe"
+            app:argType="com.thesis.sangkapp_ex.ui.recipe.Recipe" />
+    </fragment>
+
+</navigation>

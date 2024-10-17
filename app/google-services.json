@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "494274690303",
+    "firebase_url": "https://datatesting-2edf6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "datatesting-2edf6",
+    "storage_bucket": "datatesting-2edf6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494274690303:android:132b2e26c35cc8a1e320ca",
+        "android_client_info": {
+          "package_name": "com.thesis.dishdetective"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494274690303-c8j01uiu6lfv43nff3pp43tnei896rql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv5_XOS4xnKiYh61Qz0IQYXeg0XMkqINU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494274690303-c8j01uiu6lfv43nff3pp43tnei896rql.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494274690303:android:a871b80f75309b1ae320ca",
+        "android_client_info": {
+          "package_name": "com.thesis.dishdetective_xml"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494274690303-c8j01uiu6lfv43nff3pp43tnei896rql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv5_XOS4xnKiYh61Qz0IQYXeg0XMkqINU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494274690303-c8j01uiu6lfv43nff3pp43tnei896rql.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494274690303:android:9978397da369b144e320ca",
+        "android_client_info": {
+          "package_name": "com.thesis.sangkapp_ex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494274690303-c8j01uiu6lfv43nff3pp43tnei896rql.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv5_XOS4xnKiYh61Qz0IQYXeg0XMkqINU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494274690303-c8j01uiu6lfv43nff3pp43tnei896rql.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,605 @@
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="@color/white"
+    android:fillViewport="true"> <!-- This ensures that the content takes up the full height even if it is smaller -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:background="@color/white">
+
+        <!-- Header Section with Recipe Info -->
+        <LinearLayout
+            android:id="@+id/headerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center">
+
+            <!-- Icon/Image -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/recipeIcon"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:src="@drawable/plhd_recipeinfo"
+                android:contentDescription="Recipe Icon" />
+
+            <!-- Recipe Title -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/recipeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Tinola Recipe"
+                android:textSize="20sp"
+                android:textColor="@color/text_black"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+
+        <!-- Ingredients Title -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/ingredientsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ingredients"
+            android:textColor="@color/text_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+
+        <!-- Centered GridLayout for Ingredients -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ingredientsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/ingredientsTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+        <!-- Nutrition Facts Section -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/nutritionFactsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/ingredientsRecyclerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!-- Nutrition Facts Title -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/nutritionFactsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nutrition Facts"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_black"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginBottom="12dp"
+                    android:padding="4dp" />
+
+                <!-- Horizontal divider -->
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/nutritionFactsTitle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Calories Label and Value -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/caloriesLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Calories"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/nutritionFactsTitle"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/caloriesValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="120"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/caloriesLabel" />
+
+                <!-- Other nutrition facts sections here... -->
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/caloriesLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+                <!-- Carbohydrates Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/carbsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Carbohydrates"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/caloriesLabel"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <!-- Carbohydrates Value -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/carbsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6.5g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/carbsLabel" />
+
+                <!-- Fibers Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/fibersLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Fibers"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/carbsLabel"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <!-- Fibers Value -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/fibersValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fibersLabel" />
+
+                <!-- Sugars Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sugarsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Sugars"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/fibersLabel"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <!-- Sugars Value -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sugarsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/sugarsLabel" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/sugarsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+                <!-- Proteins Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/proteinsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Proteins"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/sugarsLabel"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <!-- Proteins Value -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/proteinsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="21.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/proteinsLabel" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/proteinsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <!-- Fats Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/fatsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Fats"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/proteinsLabel"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <!-- Fats Value -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/fatsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6.5g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fatsLabel" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/saturatedFatsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Saturated fatty acids"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/fatsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="2dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/saturatedFatsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/saturatedFatsLabel" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/monounsaturatedFatsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monounsaturated fatty acid"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/saturatedFatsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="2dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/monounsaturatedFatsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/monounsaturatedFatsLabel" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/monounsaturatedFatsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/VitaminsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamins"
+                    android:textColor="@color/text_black"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/monounsaturatedFatsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="6dp" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/VitaminsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/cholesterolLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cholesterol"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/VitaminsLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/cholesterolValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/cholesterolLabel" />
+
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sodiumLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sodium"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/cholesterolLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/sodiumValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/sodiumLabel" />
+
+
+
+<com.google.android.material.textview.MaterialTextView
+    android:id="@+id/calciumLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Calcium"
+    android:textColor="@color/text_black"
+    android:textSize="14sp"
+    app:layout_constraintTop_toBottomOf="@id/sodiumLabel"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginTop="4dp" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/calciumValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/calciumLabel" />
+
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/ironLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Iron"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/calciumLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ironValue"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/ironLabel" />
+
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@color/gray_200"
+                    app:layout_constraintTop_toBottomOf="@id/ironLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminALabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamin A - Beta-K"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/ironLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="8dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminABetaKValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vitaminALabel" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminARetinolLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamin A - Retinol"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/vitaminALabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminARetinolValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vitaminARetinolLabel" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminB1Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamin B1 - Thiamin"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/vitaminARetinolLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminB1Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vitaminB1Label" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminB2Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamin B2 - Riboflavin"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/vitaminB1Label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminB2Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vitaminB2Label" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminB3Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamin B3 - Niacin"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/vitaminB2Label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminB3Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vitaminB3Label" />
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminC5Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vitamin C - Ascorbic acid"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@id/vitaminB3Label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="4dp" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/vitaminC5Value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.3g"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vitaminC5Label" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

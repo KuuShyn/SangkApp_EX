@@ -1,0 +1,375 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.home.HomeFragment">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="18dp">
+
+            <!-- ArcProgress for the outer arc -->
+            <com.juanarton.arcprogressbar.ArcProgressBar
+                android:id="@+id/arc_img"
+                android:layout_width="155dp"
+                android:layout_height="155dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:progress="70"
+                app:progressMax="100"
+                app:progressMin="0"
+                app:progressColor="@color/green_500"
+                app:trackColor="@color/gray"
+                app:startAngle="140"
+                app:sweepAngle="260"
+                app:trackWidth="10dp"
+                app:progressWidth="10dp" />
+
+            <!-- Fire Icon in the center -->
+            <ImageView
+                android:id="@+id/fireIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_cal"
+                app:layout_constraintBottom_toBottomOf="@id/arc_img"
+                app:layout_constraintEnd_toEndOf="@id/arc_img"
+                app:layout_constraintStart_toStartOf="@id/arc_img"
+                app:layout_constraintTop_toTopOf="@id/arc_img"
+                app:layout_constraintVertical_bias="0.242" />
+
+            <!-- Calorie count in the center -->
+            <TextView
+                android:id="@+id/calorieCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1500"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/arc_img"
+                app:layout_constraintStart_toStartOf="@id/arc_img"
+                app:layout_constraintTop_toBottomOf="@id/fireIcon" />
+
+            <!-- Text below the calorie count -->
+            <TextView
+                android:id="@+id/caloriePerDayText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calories per day"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@id/arc_img"
+                app:layout_constraintStart_toStartOf="@id/arc_img"
+                app:layout_constraintTop_toBottomOf="@id/calorieCount" />
+
+            <!-- Consumed Title and Value -->
+
+            <!-- Remaining Title and Value -->
+
+            <TextView
+                android:id="@+id/consumedTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Consumed"
+                android:textColor="@android:color/black"
+
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/arc_img"
+
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.287" />
+
+            <TextView
+                android:id="@+id/consumedValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="33dp"
+                android:layout_marginBottom="30dp"
+                android:text="300"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/arc_img"
+                app:layout_constraintEnd_toStartOf="@+id/arc_img"
+                app:layout_constraintHorizontal_bias="0.514"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/arc_img"
+                app:layout_constraintVertical_bias="0.232" />
+
+            <!-- Remaining Value -->
+
+            <!-- Aligning the FrameLayouts horizontally -->
+
+            <TextView
+                android:id="@+id/remainingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Remaining"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.714"
+                app:layout_constraintStart_toEndOf="@+id/arc_img"
+                app:layout_constraintTop_toTopOf="@+id/remainingValue"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/remainingValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:text="1200"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.58"
+                app:layout_constraintStart_toEndOf="@+id/arc_img"
+                app:layout_constraintTop_toTopOf="@+id/arc_img" />
+
+            <FrameLayout
+                android:id="@+id/frameLayoutCarbs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toStartOf="@id/frameLayoutProteins"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/arc_img">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/circularProgressIndicatorCarbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:progress="69"
+                    app:indicatorColor="@color/blue_700"
+                    app:indicatorSize="48dp"
+                    app:trackThickness="4dp" />
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_shape"
+                    android:backgroundTint="@color/blue_500" />
+
+                <TextView
+                    android:id="@+id/centerTextCarbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="7.0g"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/carbsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Carbs"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/frameLayoutCarbs"
+                app:layout_constraintStart_toStartOf="@id/frameLayoutCarbs"
+                app:layout_constraintEnd_toEndOf="@id/frameLayoutCarbs" />
+
+            <FrameLayout
+                android:id="@+id/frameLayoutProteins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toStartOf="@id/frameLayoutYellow"
+                app:layout_constraintStart_toEndOf="@id/frameLayoutCarbs"
+                app:layout_constraintTop_toBottomOf="@id/arc_img">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/circularProgressIndicatorProteins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:progress="100"
+                    app:indicatorColor="@color/pink_700"
+                    app:indicatorSize="48dp"
+                    app:trackThickness="4dp" />
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_shape"
+                    android:backgroundTint="@color/pink_500" />
+
+                <TextView
+                    android:id="@+id/centerTextProteins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="6.5g"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/proteinsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Proteins"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/frameLayoutProteins"
+                app:layout_constraintStart_toStartOf="@id/frameLayoutProteins"
+                app:layout_constraintEnd_toEndOf="@id/frameLayoutProteins" />
+
+            <FrameLayout
+                android:id="@+id/frameLayoutYellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/frameLayoutProteins"
+                app:layout_constraintTop_toBottomOf="@id/arc_img">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/circularProgressIndicatorYellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:progress="80"
+                    app:indicatorColor="@color/yellow_700"
+                    app:indicatorSize="48dp"
+                    app:trackThickness="4dp" />
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_shape"
+                    android:backgroundTint="@color/yellow_500" />
+
+                <TextView
+                    android:id="@+id/centerTextYellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="8.0g"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/yellowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Fats"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/frameLayoutYellow"
+                app:layout_constraintStart_toStartOf="@id/frameLayoutYellow"
+                app:layout_constraintEnd_toEndOf="@id/frameLayoutYellow" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/breakfastSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="0.058"
+        tools:context=".ui.home.HomeFragment"
+        tools:layout_editor_absoluteX="0dp">
+
+        <!-- Breakfast Title -->
+        <TextView
+            android:id="@+id/breakfastTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Breakfast"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Breakfast Calories -->
+        <TextView
+            android:id="@+id/breakfastCalories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="308/500"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/breakfastTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/breakfastTitle" />
+
+        <!-- Divider -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@id/breakfastCalories" />
+
+        <!-- LinearLayout for dynamic content (Food items will be added here) -->
+        <LinearLayout
+            android:id="@+id/foodItemsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/breakfastCalories" />
+
+        <!-- Add Food Button -->
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:id="@+id/addFoodButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Add food"
+            android:textSize="12sp"
+            app:icon="@drawable/baseline_add_24"
+            app:iconPadding="1dp"
+            app:iconSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/foodItemsContainer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

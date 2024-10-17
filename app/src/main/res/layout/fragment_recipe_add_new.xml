@@ -1,0 +1,191 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white"
+    >
+
+    <!-- ScrollView to make the screen scrollable -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/addIngredientButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/dynamicFieldsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Dish Name -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dishNameLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Dish Name"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_semibold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dishNameInputLayout"
+                style="@style/RoundedTextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ex. Pork Sinigang">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="yes"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Number of Servings -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/servingsLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="# of Servings"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_semibold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/servingsInputLayout"
+                style="@style/RoundedTextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ex. 5">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="yes"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Recipe section header -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/recipeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Recipe"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_semibold" />
+
+            <!-- Initial Ingredient and Quantity Fields -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Ingredient Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/ingredientLabel"
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ingredient"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_semibold" />
+
+                <!-- Quantity Label -->
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/quantityLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="24dp"
+                    android:text="Quantity"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_semibold" />
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:baselineAligned="false"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <com.google.android.material.textfield.TextInputLayout-->
+<!--                    android:id="@+id/ingredientInputLayout"-->
+<!--                    style="@style/RoundedTextInputLayoutAutoComplete"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:hint="e.g Beef">-->
+
+<!--                    <com.google.android.material.textfield.MaterialAutoCompleteTextView-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:inputType="none" />-->
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+<!--                <com.google.android.material.textfield.TextInputLayout-->
+<!--                    android:id="@+id/quantityInputLayout"-->
+<!--                    style="@style/RoundedTextInputLayout"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="24dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:hint="grams (g)">-->
+
+<!--                    <com.google.android.material.textfield.TextInputEditText-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:importantForAccessibility="yes"-->
+<!--                        android:inputType="numberDecimal" />-->
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
+<!--            </LinearLayout>-->
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Add new ingredient button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addIngredientButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Add new ingredient"
+        android:fontFamily="@font/poppins_semibold"
+        style="@style/Widget.Material3.Button.IconButton"
+        app:icon="@drawable/baseline_add_circle_24"
+        app:iconTint="@color/green_700"
+        app:iconPadding="6dp"
+        app:iconSize="24dp"
+        app:iconGravity="start"
+        app:layout_constraintBottom_toTopOf="@id/addRecipeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Add Recipe button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addRecipeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:paddingStart="36dp"
+        android:paddingEnd="36dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Add Recipe"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
