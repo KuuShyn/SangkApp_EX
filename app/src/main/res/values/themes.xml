@@ -43,4 +43,23 @@
         <item name="boxBackgroundColor">@android:color/white</item> <!-- You can change background color -->
     </style>
 
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomMaterial3BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomMaterial3BottomSheet</item>
+    </style>
+
+    <style name="CustomMaterial3BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="shapeAppearanceMediumComponent">@style/CustomBottomSheetShape</item>
+    </style>
+
+    <!-- Rounded Corners -->
+    <style name="CustomBottomSheetShape" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
 </resources>

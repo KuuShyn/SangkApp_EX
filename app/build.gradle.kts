@@ -74,6 +74,8 @@ dependencies {
     implementation(libs.android.arcprogressbar)
     implementation(libs.firebase.firestore)
     implementation(libs.guava)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.activity)
 
 //    implementation(libs.litert.support.api)
 //    implementation(libs.litert)

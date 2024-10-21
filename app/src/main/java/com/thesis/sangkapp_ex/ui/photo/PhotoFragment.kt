@@ -26,6 +26,7 @@ import com.thesis.sangkapp_ex.FoodDensity
 import com.thesis.sangkapp_ex.FoodNutrients
 import com.thesis.sangkapp_ex.JsonUtils
 import com.thesis.sangkapp_ex.databinding.FragmentPhotoBinding
+import com.thesis.sangkapp_ex.ui.OverlayView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,6 +60,15 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
         loadFoodData()
 
         binding.depthMapView.visibility = View.GONE
+
+        // Set BoundingBoxClickListener for OverlayView
+        binding.overlay.boundingBoxClickListener = object : OverlayView.BoundingBoxClickListener {
+            override fun onBoundingBoxClicked(boundingBox: BoundingBox) {
+                Toast.makeText(requireContext(), "Clicked on: ${boundingBox.clsName}", Toast.LENGTH_SHORT).show()
+                // Handle the click event (e.g., navigate to a detail view, highlight the box, etc.)
+                Log.d("PhotoFragment", "Clicked on: ${boundingBox.clsName}")
+            }
+        }
 
         photoViewModel.cameraParams.observe(viewLifecycleOwner) { params ->
             if (params != null) {
@@ -114,6 +124,8 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
         Log.d("PhotoFragment", "Loaded ${foodDensityList.size} food density entries.")
     }
 
+    // Inside PhotoFragment.kt
+
     private fun startDepthPredictionOnCroppedImages(
         focalLength: Float,
         sensorWidth: Float,
@@ -123,6 +135,13 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
         CoroutineScope(Dispatchers.Default).launch {
             try {
                 val originalBitmap = binding.imageView.drawable.toBitmap()
+                var totalCalories = 0f
+                var totalCarbs = 0f
+                var totalProteins = 0f
+                var totalFats = 0f
+
+                var detectedFoodCount = 0
+
                 for (box in boundingBoxes) {
                     val croppedBitmap = cropBitmapForBoundingBox(originalBitmap, box)
 
@@ -137,12 +156,6 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
 
                     val pixelWidth = (box.x2 - box.x1) * originalBitmap.width
                     val pixelHeight = (box.y2 - box.y1) * originalBitmap.height
-
-                    // Log bounding box dimensions
-                    Log.d(
-                        "PhotoFragment",
-                        "Bounding Box Width (pixels): $pixelWidth, Height (pixels): $pixelHeight"
-                    )
 
                     val realWorldWidth = convertPixelToRealWorldWidth(
                         pixelWidth,
@@ -159,24 +172,38 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
 
                     val averageDepthInMeters = calculateAverageDepthFromMap(actualDepth)
 
-                    // Log depth to verify correctness
-                    Log.d("PhotoFragment", "Average Depth (meters): $averageDepthInMeters")
-
                     val detectedFood = capitalizeWords(box.clsName)
 
-                    val (portionWeight, totalCalories) = estimatePortionSizeAndCalories(
+                    val nutrientEstimationResult = estimatePortionSizeAndNutrients(
                         realWorldWidth,
                         realWorldHeight,
                         averageDepthInMeters,
                         detectedFood
                     )
 
-                    Log.d("PhotoFragment", "Real-world width: $realWorldWidth meters")
-                    Log.d("PhotoFragment", "Real-world height: $realWorldHeight meters")
-                    Log.d("PhotoFragment", "Average depth: $averageDepthInMeters meters")
-                    Log.d("PhotoFragment", "Detected food: $detectedFood")
-                    Log.d("PhotoFragment", "Estimated portion weight: $portionWeight grams")
-                    Log.d("PhotoFragment", "Estimated calories: $totalCalories kcal")
+                    if (nutrientEstimationResult != null) {
+                        // Accumulate the total values for calories, carbs, proteins, and fats
+                        totalCalories += nutrientEstimationResult.totalCalories
+                        totalCarbs += nutrientEstimationResult.carbohydrateTotal
+                        totalProteins += nutrientEstimationResult.protein
+                        totalFats += nutrientEstimationResult.totalFat
+
+                        detectedFoodCount++
+                    }
+                }
+
+                // Once the loop is done, pass these aggregated values to NutritionBottomSheet
+                if (detectedFoodCount > 0) {
+                    withContext(Dispatchers.Main) {
+                        showNutritionBottomSheet(
+                            detectedFoodCount,
+                            totalCalories.toInt(),
+                            totalCalories,
+                            totalCarbs,
+                            totalProteins,
+                            totalFats
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("PhotoFragment", "Error during depth prediction on cropped images", e)
@@ -187,6 +214,27 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
             }
         }
     }
+
+    // Function to display the NutritionBottomSheet with calculated nutrients
+    private fun showNutritionBottomSheet(
+        dishesDetected: Int,
+        combinedCalories: Int,
+        calories: Float,
+        carbs: Float,
+        proteins: Float,
+        fats: Float
+    ) {
+        val bottomSheet = NutritionBottomSheet.newInstance(
+            dishesDetected,
+            combinedCalories,
+            calories,
+            carbs,
+            proteins,
+            fats
+        )
+        bottomSheet.show(parentFragmentManager, "NutritionBottomSheet")
+    }
+
 
     private fun convertPixelToRealWorldWidth(
         pixelWidth: Float,
@@ -227,12 +275,13 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
         return if (pixelCount > 0) totalDepth / pixelCount else 0f
     }
 
-    private fun estimatePortionSizeAndCalories(
+    // In PhotoFragment.kt
+    private fun estimatePortionSizeAndNutrients(
         realWorldWidth: Float,
         realWorldHeight: Float,
         averageDepth: Float,
         detectedFood: String
-    ): Pair<Float, Float> {
+    ): NutrientEstimationResult? {
         val realVolume = realWorldWidth * realWorldHeight * averageDepth
         val volumeInCubicCentimeters = realVolume * 1_000_000 // Convert to cubic centimeters (cm³)
 
@@ -242,7 +291,7 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
 
         if (foodNutrients == null) {
             Log.e("PhotoFragment", "Food item '$detectedFood' not found in the nutrients database.")
-            return Pair(0f, 0f)
+            return null
         }
 
         val foodDensity = foodDensityMap[foodNutrients.foodId]
@@ -252,16 +301,55 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
                 "PhotoFragment",
                 "Density data for food item '${foodNutrients.foodNameAndDescription}' not found."
             )
-            return Pair(0f, 0f)
+            return null
         }
 
         val density = foodDensity.densityGml
         val portionWeight = volumeInCubicCentimeters * density
 
+        // Calculate nutrients per portion
         val energyPer100g = foodNutrients.energyCalculated ?: 0f
         val totalCalories = (portionWeight / 100) * energyPer100g
 
-        return Pair(portionWeight, totalCalories)
+        val protein = (portionWeight / 100) * (foodNutrients.protein ?: 0f)
+        val totalFat = (portionWeight / 100) * (foodNutrients.totalFat ?: 0f)
+        val carbohydrateTotal = (portionWeight / 100) * (foodNutrients.carbohydrateTotal ?: 0f)
+        val fiberTotalDietary = (portionWeight / 100) * (foodNutrients.fiberTotalDietary ?: 0f)
+        val sugarsTotal = (portionWeight / 100) * (foodNutrients.sugarsTotal ?: 0f)
+        val calciumCa = (portionWeight / 100) * (foodNutrients.calciumCa ?: 0f)
+        val phosphorusP = (portionWeight / 100) * (foodNutrients.phosphorusP ?: 0f)
+        val ironFe = (portionWeight / 100) * (foodNutrients.ironFe ?: 0f)
+        val sodiumNa = (portionWeight / 100) * (foodNutrients.sodiumNa ?: 0f)
+        val vitaminA = (portionWeight / 100) * (foodNutrients.retinolVitaminA ?: 0f)
+        val vitaminB1 = (portionWeight / 100) * (foodNutrients.thiaminVitaminB1 ?: 0f)
+        val vitaminB2 = (portionWeight / 100) * (foodNutrients.riboflavinVitaminB2 ?: 0f)
+        val niacin = (portionWeight / 100) * (foodNutrients.niacin ?: 0f)
+        val vitaminC = (portionWeight / 100) * (foodNutrients.ascorbicAcidVitaminC ?: 0f)
+        val fattyAcidsSaturatedTotal = (portionWeight / 100) * (foodNutrients.fattyAcidsSaturatedTotal ?: 0f)
+        val fattyAcidsMonounsaturatedTotal = (portionWeight / 100) * (foodNutrients.fattyAcidsMonounsaturatedTotal ?: 0f)
+        val cholesterol = (portionWeight / 100) * (foodNutrients.cholesterol ?: 0f)
+
+        return NutrientEstimationResult(
+            portionWeight = portionWeight,
+            totalCalories = totalCalories,
+            protein = protein,
+            totalFat = totalFat,
+            carbohydrateTotal = carbohydrateTotal,
+            fiberTotalDietary = fiberTotalDietary,
+            sugarsTotal = sugarsTotal,
+            calciumCa = calciumCa,
+            phosphorusP = phosphorusP,
+            ironFe = ironFe,
+            sodiumNa = sodiumNa,
+            vitaminA = vitaminA,
+            vitaminB1 = vitaminB1,
+            vitaminB2 = vitaminB2,
+            niacin = niacin,
+            vitaminC = vitaminC,
+            fattyAcidsSaturatedTotal = fattyAcidsSaturatedTotal,
+            fattyAcidsMonounsaturatedTotal = fattyAcidsMonounsaturatedTotal,
+            cholesterol = cholesterol
+        )
     }
 
     private fun cropBitmapForBoundingBox(bitmap: Bitmap, box: BoundingBox): Bitmap {

@@ -6,11 +6,11 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.thesis.sangkapp_ex.BoundingBox
 import com.thesis.sangkapp_ex.R
-
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -18,8 +18,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     private var boxPaint = Paint()
     private var textBackgroundPaint = Paint()
     private var textPaint = Paint()
-
     private var bounds = Rect()
+    var boundingBoxClickListener: BoundingBoxClickListener? = null
 
     init {
         initPaints()
@@ -57,12 +57,15 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             val right = it.x2 * width
             val bottom = it.y2 * height
 
+            // Draw bounding box
             canvas.drawRect(left, top, right, bottom, boxPaint)
-            val drawableText = it.clsName
 
+            // Draw label text
+            val drawableText = it.clsName
             textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bounds)
             val textWidth = bounds.width()
             val textHeight = bounds.height()
+
             canvas.drawRect(
                 left,
                 top,
@@ -71,10 +74,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
                 textBackgroundPaint
             )
             canvas.drawText(drawableText, left, top + bounds.height(), textPaint)
-
         }
     }
-
 
     fun setResults(boundingBoxes: List<BoundingBox>) {
         results = boundingBoxes
@@ -83,6 +84,32 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     fun getBoundingBoxes(): List<BoundingBox> {
         return results
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            val x = event.x
+            val y = event.y
+
+            // Check if touch is within any bounding box
+            results.forEach { box ->
+                val left = box.x1 * width
+                val top = box.y1 * height
+                val right = box.x2 * width
+                val bottom = box.y2 * height
+
+                if (x in left..right && y in top..bottom) {
+                    // Bounding box clicked
+                    boundingBoxClickListener?.onBoundingBoxClicked(box)
+                    return true
+                }
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    interface BoundingBoxClickListener {
+        fun onBoundingBoxClicked(boundingBox: BoundingBox)
     }
 
     companion object {

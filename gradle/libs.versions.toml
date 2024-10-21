@@ -32,6 +32,8 @@ onnx = "1.17.0"
 zoomable = "1.6.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseFirestore = "25.1.0"
+firebaseAuth = "23.0.0"
+activity = "1.9.2"
 
 [libraries]
 android-arcprogressbar = { module = "com.github.JuanArton:Android-ArcProgressBar", version.ref = "androidArcprogressbar" }
@@ -74,6 +76,8 @@ tensorflow-lite-support = { module = "org.tensorflow:tensorflow-lite-support", v
 onnx = { group = "com.microsoft.onnxruntime"  , name="onnxruntime-android" , version.ref="onnx" }
 zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
 
 

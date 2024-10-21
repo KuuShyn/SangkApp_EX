@@ -139,7 +139,7 @@ class RecipeAddNewFragment : Fragment() {
     }
 
     private fun saveRecipeToFirestore() {
-        // Retrieve Dish Name
+        // Retrieve the dish name
         val dishNameInputLayout = view?.findViewById<TextInputLayout>(R.id.dishNameInputLayout)
         val dishNameEditText = dishNameInputLayout?.editText as? TextInputEditText
         val dishName = dishNameEditText?.text.toString().trim()
@@ -149,7 +149,7 @@ class RecipeAddNewFragment : Fragment() {
             return
         }
 
-        // Retrieve Number of Servings
+        // Retrieve the number of servings
         val servingsInputLayout = view?.findViewById<TextInputLayout>(R.id.servingsInputLayout)
         val servingsEditText = servingsInputLayout?.editText as? TextInputEditText
         val servingsText = servingsEditText?.text.toString().trim()
@@ -160,7 +160,7 @@ class RecipeAddNewFragment : Fragment() {
             return
         }
 
-        // Retrieve Ingredients
+        // Retrieve ingredients
         val ingredients = mutableListOf<Ingredient>()
         for (fields in ingredientQuantityFieldsList) {
             val ingredientName = fields.ingredientAutoComplete?.text.toString().trim()
@@ -178,30 +178,15 @@ class RecipeAddNewFragment : Fragment() {
             ingredients.add(Ingredient(name = ingredientName, quantity = quantity))
         }
 
-        // Retrieve Nutrients (Assuming you calculate nutrients based on ingredients)
-        // For simplicity, let's assume dummy data or implement nutrient calculation logic
-        // Here, we'll mock the nutrients data
-
-        // TODO: Implement nutrient calculation based on ingredients
+        // Assume dummy nutrient data or calculated nutrients
         val nutrients = Nutrients(
-            carbohydrates = "20g",
-            proteins = "30g",
-            fats = "15g",
-            fibers = "5g",
-            sugars = "10g",
-            cholesterol = "0g",
-            sodium = "1g",
-            calcium = "22mg",
-            iron = "1.3mg",
-            vitaminABetaK = "65µg",
-            vitaminARetinol = "5µg",
-            vitaminB1 = "0.14mg",
-            vitaminB2 = "0.03mg",
-            vitaminB3 = "1.3mg",
-            vitaminC5 = "0mg"
+            carbohydrates = "20g", proteins = "30g", fats = "15g",
+            fibers = "5g", sugars = "10g", cholesterol = "0g", sodium = "1g",
+            calcium = "22mg", iron = "1.3mg", vitaminABetaK = "65µg",
+            vitaminARetinol = "5µg", vitaminB1 = "0.14mg", vitaminB2 = "0.03mg",
+            vitaminB3 = "1.3mg", vitaminC5 = "0mg"
         )
 
-        // Create Recipe object
         val recipe = Recipe(
             name = dishName,
             servings = servings,
@@ -209,36 +194,24 @@ class RecipeAddNewFragment : Fragment() {
             nutrients = nutrients
         )
 
-        // Save to Firestore
-        firestore.collection("recipes")
-            .add(recipe)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT)
-                    .show()
-                listener?.onRecipeAdded(recipe)
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to add recipe: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        // Get user ID from SharedPreferences
+        val userId = context?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            ?.getString("USER_ID", null)
+
+        if (userId != null) {
+            firestore.collection("users").document(userId)
+                .collection("recipes")
+                .add(recipe)
+                .addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT).show()
+                    listener?.onRecipeAdded(recipe)
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Failed to add recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(requireContext(), "Error: User ID not found", Toast.LENGTH_LONG).show()
+        }
     }
 
-    private fun clearFields() {
-        // Clear Dish Name and Servings
-        val dishNameEditText =
-            view?.findViewById<TextInputLayout>(R.id.dishNameInputLayout)?.editText as? TextInputEditText
-        dishNameEditText?.text?.clear()
-
-        val servingsEditText =
-            view?.findViewById<TextInputLayout>(R.id.servingsInputLayout)?.editText as? TextInputEditText
-        servingsEditText?.text?.clear()
-
-        // Remove all ingredient fields and add a new one
-        dynamicFieldsContainer.removeAllViews()
-        ingredientQuantityFieldsList.clear()
-        addNewIngredientFields()
-    }
 }

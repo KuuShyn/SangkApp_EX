@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/profile_input">
 
     <fragment
         android:id="@+id/nav_home"
@@ -12,10 +12,29 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.thesis.sangkapp_ex.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_profile"
+        android:name="com.thesis.sangkapp_ex.ui.profile.ProfileDetailsFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_profile_details" />
+
+
+    <fragment
+        android:id="@+id/profile_input"
+        android:name="com.thesis.sangkapp_ex.ui.profile.ProfileInputFragment"
+        tools:layout="@layout/fragment_profile_input">
+        <action
+            android:id="@+id/action_profileInputFragment_to_profileInputFragment2"
+            app:destination="@id/profile_input2" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profile_input2"
+        android:name="com.thesis.sangkapp_ex.ui.profile.ProfileInputFragment2"
+        tools:layout="@layout/fragment_profile_input2">
+        <action
+            android:id="@+id/action_profileInputFragment2_to_profileDetailsFragment"
+            app:destination="@id/nav_profile" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_camera"
@@ -37,7 +56,6 @@
             app:argType="android.net.Uri" />
     </fragment>
 
-    <!-- With this nested navigation graph -->
     <fragment
         android:id="@+id/nav_recipe"
         android:name="com.thesis.sangkapp_ex.ui.recipe.RecipeAnalyzerFragment"
@@ -47,7 +65,6 @@
             android:id="@+id/action_nav_recipe_to_recipeInfoFragment"
             app:destination="@id/recipeInfoFragment" />
     </fragment>
-
 
     <fragment
         android:id="@+id/recipeInfoFragment"

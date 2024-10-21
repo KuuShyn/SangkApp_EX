@@ -17,4 +17,5 @@
     <string name="camera">Camera</string>
     <string name="captured_photo">Captured</string>
     <string name="recipey">recipe\n</string>
+    <string name="menu_profile">Profile</string>
 </resources>

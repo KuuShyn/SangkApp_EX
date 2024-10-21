@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ui.profile.ProfileFragment2">
+    tools:context=".ui.profile.ProfileInputFragment2">
 
     <!-- Title: Calorie Allowance Per Meal -->
     <com.google.android.material.textview.MaterialTextView
@@ -15,11 +15,22 @@
         android:layout_marginTop="16dp"
         android:text="Calories Allowance Per Meal"
         android:textSize="18sp"
-        android:textStyle="bold"
         app:fontFamily="@font/poppins_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/caloriesValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="1500"
+        android:textSize="18sp"
+        app:fontFamily="@font/poppins_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
 
     <View
         android:id="@+id/CaloriesDivider"
@@ -94,23 +105,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Calorie Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+        <EditText
+            android:id="@+id/breakfastCalories"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:autofillHints="480"
+            android:background="@android:color/transparent"
             android:hint="480"
-            app:boxBackgroundMode="none"
+            android:inputType="numberDecimal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/breakfastCalories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Divider Below Breakfast Row -->
@@ -118,7 +124,6 @@
         android:id="@+id/breakfastDivider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-
         android:background="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -164,23 +169,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Calorie Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+        <EditText
+            android:id="@+id/lunchCalories"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:hint="480"
-            app:boxBackgroundMode="none"
+            android:autofillHints="480"
+            android:inputType="numberDecimal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/lunchCalories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Divider Below Lunch Row -->
@@ -233,23 +233,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Calorie Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+        <EditText
+            android:id="@+id/dinnerCalories"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:hint="480"
-            app:boxBackgroundMode="none"
+            android:autofillHints="480"
+            android:inputType="numberDecimal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/dinnerCalories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Divider Below Dinner Row -->
@@ -257,7 +252,6 @@
         android:id="@+id/dinnerDivider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-
         android:background="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -303,23 +297,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Calorie Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+        <EditText
+            android:id="@+id/snackCalories"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:hint="480"
-            app:boxBackgroundMode="none"
+            android:autofillHints="480"
+            android:inputType="numberDecimal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/snackCalories"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/poppins"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Divider Below Snack Row -->
@@ -336,12 +325,12 @@
         android:id="@+id/submitButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="Submit"
-        android:fontFamily="@font/poppins_semibold"
         android:layout_marginTop="26dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="Submit"
         app:cornerRadius="9dp"
-        app:layout_constraintTop_toBottomOf="@+id/snackDivider"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/snackDivider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val photoViewModel: PhotoViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,11 +52,19 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home,  R.id.nav_slideshow, R.id.nav_camera, R.id.nav_recipe
+                R.id.nav_home,  R.id.nav_profile, R.id.nav_camera, R.id.nav_recipe
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Handle fragment navigation based on intent extras
+        val fragmentToLoad = intent.getStringExtra("fragment")
+        if (fragmentToLoad == "profile_details") {
+            navController.navigate(R.id.nav_profile)  // Navigate to ProfileDetailsFragment
+        } else if (fragmentToLoad == "profile_input") {
+            navController.navigate(R.id.profile_input)  // Navigate to ProfileInputFragment
+        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -80,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
             val cameraIdList = cameraManager.cameraIdList
 
-            // Loop through available cameras (back camera preferred)
+            // Loop through available cameras (back camerwa preferred)
             for (cameraId in cameraIdList) {
                 val characteristics = cameraManager.getCameraCharacteristics(cameraId)
 
