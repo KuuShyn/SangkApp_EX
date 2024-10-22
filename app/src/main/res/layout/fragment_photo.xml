@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.photo.PhotoFragment">
 
-
     <!-- ImageView to display the original image -->
     <com.thesis.sangkapp_ex.CustomImageView
         android:id="@+id/imageView"
