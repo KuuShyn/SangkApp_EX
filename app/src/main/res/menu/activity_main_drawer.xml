@@ -23,5 +23,11 @@
             android:id="@+id/nav_recipe"
             android:icon="@drawable/ic_recipe"
             android:title="@string/recipey" />
+
+        <item
+            android:id="@+id/nav_log_food"
+            android:icon="@drawable/ic_log"
+            android:title="@string/logs" />
+
     </group>
 </menu>

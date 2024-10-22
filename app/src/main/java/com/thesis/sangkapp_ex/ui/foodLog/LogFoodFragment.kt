@@ -1,4 +1,4 @@
-package com.thesis.sangkapp_ex.ui.recipe
+package com.thesis.sangkapp_ex.ui.foodLog
 
 import android.graphics.Color
 import android.os.Bundle
@@ -11,29 +11,30 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.thesis.sangkapp_ex.R
+import com.thesis.sangkapp_ex.ui.recipe.Recipe
 
-class RecipeAnalyzerFragment : Fragment(), RecipeHistoryFragment.OnRecipeSelectedListener, RecipeAddNewFragment.OnRecipeAddedListener {
+class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnRecipeSelectedListener {
 
     private lateinit var toggleGroup: MaterialButtonToggleGroup
-    private lateinit var addNewButton: MaterialButton
-    private lateinit var historyButton: MaterialButton
+    private lateinit var featuredButton: MaterialButton
+    private lateinit var myRecipeButton: MaterialButton
     private lateinit var fragmentContainer: FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_recipe_analyzer, container, false)
+        val view = inflater.inflate(R.layout.fragment_log_food, container, false)
 
         // Initialize the toggle group and buttons
         toggleGroup = view.findViewById(R.id.toggleGroup)
-        addNewButton = view.findViewById(R.id.featuredButton)
-        historyButton = view.findViewById(R.id.myRecipeButton)
+        featuredButton = view.findViewById(R.id.featuredButton)
+        myRecipeButton = view.findViewById(R.id.myRecipeButton)
         fragmentContainer = view.findViewById(R.id.fragmentContainer)
 
-        // Set default fragment to History
+
         if (savedInstanceState == null) {
-            replaceChildFragment(RecipeHistoryFragment())
+            replaceChildFragment(LogFeaturedFragment())
         }
 
         // Handle button checked events
@@ -41,12 +42,13 @@ class RecipeAnalyzerFragment : Fragment(), RecipeHistoryFragment.OnRecipeSelecte
             if (isChecked) {
                 when (checkedId) {
                     R.id.featuredButton -> {
-                        replaceChildFragment(RecipeAddNewFragment())
-                        updateButtonStyles(addNewButton, historyButton)
+                        replaceChildFragment(LogFeaturedFragment())
+                        updateButtonStyles(featuredButton, myRecipeButton)
                     }
+
                     R.id.myRecipeButton -> {
-                        replaceChildFragment(RecipeHistoryFragment())
-                        updateButtonStyles(historyButton, addNewButton)
+                        replaceChildFragment(LogMyRecipeFragment())
+                        updateButtonStyles(myRecipeButton, featuredButton)
                     }
                 }
             }
@@ -73,15 +75,10 @@ class RecipeAnalyzerFragment : Fragment(), RecipeHistoryFragment.OnRecipeSelecte
         inactiveButton.setTextColor(Color.BLACK)
     }
 
+    // Handle recipe selection and navigate to RecipeInfoFragment
     override fun onRecipeSelected(recipe: Recipe) {
-        val action = RecipeAnalyzerFragmentDirections.actionNavRecipeToRecipeInfoFragment(recipe)
+        // Use SafeArgs to pass the selected recipe to RecipeInfoFragment
+        val action = LogFoodFragmentDirections.actionNavLogFoodToRecipeInfoFragment(recipe)
         findNavController().navigate(action)
     }
-
-    override fun onRecipeAdded(recipe: Recipe) {
-        val action = RecipeAnalyzerFragmentDirections.actionNavRecipeToRecipeInfoFragment(recipe)
-        findNavController().navigate(action)
-    }
-
-
 }

@@ -11,22 +11,19 @@
         android:id="@+id/handle"
         android:layout_width="50dp"
         android:layout_height="8dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center"
         android:backgroundTint="?attr/colorOutline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/cardNutrientsView" />
+ />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardNutrientsView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:elevation="4dp"
         app:cardBackgroundColor="@android:color/white"
-        app:cardCornerRadius="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

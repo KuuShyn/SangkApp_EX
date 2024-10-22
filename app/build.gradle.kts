@@ -45,7 +45,6 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -71,7 +70,6 @@ dependencies {
     implementation(libs.zoomable)
     implementation(libs.gson)
 
-    implementation(libs.android.arcprogressbar)
     implementation(libs.firebase.firestore)
     implementation(libs.guava)
     implementation(libs.firebase.auth)

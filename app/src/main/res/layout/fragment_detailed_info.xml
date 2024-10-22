@@ -27,7 +27,7 @@
 
             <!-- Icon/Image -->
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/recipeIcon"
+                android:id="@+id/foodImage"
                 android:layout_width="130dp"
                 android:layout_height="130dp"
                 android:contentDescription="Recipe Icon"
@@ -35,7 +35,7 @@
 
             <!-- Recipe Title -->
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/recipeTitle"
+                android:id="@+id/food_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"

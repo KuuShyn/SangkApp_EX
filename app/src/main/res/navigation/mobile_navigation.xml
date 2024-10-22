@@ -51,10 +51,38 @@
         android:name="com.thesis.sangkapp_ex.ui.photo.PhotoFragment"
         android:label="@string/captured_photo"
         tools:layout="@layout/fragment_photo">
+        <action
+            android:id="@+id/action_photoFragment_to_detailedInfoFragment"
+            app:destination="@id/detailedInfoFragment" />
         <argument
             android:name="imageUri"
             app:argType="android.net.Uri" />
     </fragment>
+
+    <!-- com.thesis.sangkapp_ex.ui.photo.DetailedInfoFragment -->
+    <!-- nav_graph.xml -->
+    <fragment
+        android:id="@+id/detailedInfoFragment"
+        android:name="com.thesis.sangkapp_ex.ui.photo.DetailedInfoFragment"
+        android:label="DetailedInfoFragment">
+        <argument
+            android:name="foodName"
+            app:argType="string" />
+        <argument
+            android:name="croppedImageUri"
+            app:argType="android.net.Uri" />
+        <argument
+            android:name="detectedVolume"
+            app:argType="float" />
+        <argument
+            android:name="mealPortion"
+            app:argType="float" />
+        <argument
+            android:name="nutrientEstimationResult"
+            app:argType="com.thesis.sangkapp_ex.ui.photo.NutrientEstimationResult" />
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/nav_recipe"
@@ -74,5 +102,16 @@
             android:name="selectedRecipe"
             app:argType="com.thesis.sangkapp_ex.ui.recipe.Recipe" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_log_food"
+        android:name="com.thesis.sangkapp_ex.ui.foodLog.LogFoodFragment"
+        android:label="@string/logs"
+        tools:layout="@layout/fragment_log_food">
+        <action
+            android:id="@+id/action_nav_log_food_to_recipeInfoFragment"
+            app:destination="@id/recipeInfoFragment" />
+    </fragment>
+
 
 </navigation>

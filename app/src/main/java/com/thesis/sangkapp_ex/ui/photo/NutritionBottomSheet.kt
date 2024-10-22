@@ -1,7 +1,6 @@
 package com.thesis.sangkapp_ex.ui.photo
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,15 +30,13 @@ class NutritionBottomSheet : BottomSheetDialogFragment() {
         val behavior = BottomSheetBehavior.from(bottomSheet!!)
 
         // Allow full expansion
-        behavior.isFitToContents = true
+
         behavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        behavior.peekHeight = 300  // Minimum visible height when collapsed
+        behavior.peekHeight = 330  // Minimum visible height when collapsed
 
         // Prevent hiding when dragged down
         behavior.isHideable = false
 
-        // Optional: Set the maximum height programmatically if needed
-        bottomSheet.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
 
         // Find views
         val dishesDetectedValue: TextView = view.findViewById(R.id.dishesDetectedValue)
@@ -72,7 +69,7 @@ class NutritionBottomSheet : BottomSheetDialogFragment() {
 
         // Set the values on the UI
         dishesDetectedValue.text = dishesDetected.toString()
-        combinedCaloriesValue.text = "$combinedCalories kcal"
+        "$combinedCalories kcal".also { combinedCaloriesValue.text = it }
 
         // Update the CircularProgressIndicators and their center text values
         updateProgressIndicator(

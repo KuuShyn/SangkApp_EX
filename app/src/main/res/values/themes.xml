@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.SangkApp_EX" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.SangkApp_EX" parent="Theme.Material3.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/green_700</item>
         <item name="colorPrimaryVariant">@color/green_700</item>
@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
     </style>
 
     <style name="Theme.SangkApp_EX.NoActionBar">
@@ -19,7 +20,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.SangkApp_EX.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+    <style name="Theme.SangkApp_EX.AppBarOverlay" parent="ThemeOverlay.Material3.Light" />
 
     <style name="Theme.SangkApp_EX.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
 

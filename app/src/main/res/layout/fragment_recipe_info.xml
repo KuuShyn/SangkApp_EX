@@ -35,7 +35,7 @@
 
             <!-- Recipe Title -->
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/recipeTitle"
+                android:id="@+id/food_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Tinola Recipe"

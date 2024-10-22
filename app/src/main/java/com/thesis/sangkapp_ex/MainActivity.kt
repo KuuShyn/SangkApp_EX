@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home,  R.id.nav_profile, R.id.nav_camera, R.id.nav_recipe
+                R.id.nav_home,  R.id.nav_profile, R.id.nav_camera, R.id.nav_recipe, R.id.nav_log_food
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -78,8 +78,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-
-
     // Function to get camera calibration parameters
     private fun getCameraCalibrationParams(context: Context): CameraCalibrationParams? {
         try {
@@ -87,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
             val cameraIdList = cameraManager.cameraIdList
 
-            // Loop through available cameras (back camerwa preferred)
+            // Loop through available cameras (back camera preferred)
             for (cameraId in cameraIdList) {
                 val characteristics = cameraManager.getCameraCharacteristics(cameraId)
 

@@ -16,6 +16,7 @@
     <string name="gpu_acceleration">GPU Acceleration</string>
     <string name="camera">Camera</string>
     <string name="captured_photo">Captured</string>
-    <string name="recipey">recipe\n</string>
+    <string name="recipey">Recipe</string>
     <string name="menu_profile">Profile</string>
+    <string name="logs">Logs</string>
 </resources>

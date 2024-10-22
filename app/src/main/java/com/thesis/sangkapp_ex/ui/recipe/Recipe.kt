@@ -11,5 +11,6 @@ data class Recipe(
     val calories: Int = 1,
     val servings: Int = 1,
     val ingredients: List<Ingredient> = listOf(),
-    val nutrients: Nutrients = Nutrients()
+    val nutrients: Nutrients = Nutrients(),
+    val imageResId: Int? = null
 ) : Parcelable

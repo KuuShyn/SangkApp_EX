@@ -1,5 +1,9 @@
 package com.thesis.sangkapp_ex.ui.photo
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class NutrientEstimationResult (
     val portionWeight: Float,
     val totalCalories: Float,
@@ -21,4 +25,4 @@ data class NutrientEstimationResult (
     val fattyAcidsMonounsaturatedTotal: Float,
     val cholesterol: Float
     // Add other nutrients as needed
-)
+): Parcelable

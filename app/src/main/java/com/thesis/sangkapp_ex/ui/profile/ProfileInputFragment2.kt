@@ -55,10 +55,10 @@ class ProfileInputFragment2 : Fragment() {
 
     private fun setupPercentages() {
         // Set up default percentages
-        binding.breakfastPercentage.text = "30%"
-        binding.lunchPercentage.text = "30%"
-        binding.dinnerPercentage.text = "30%"
-        binding.snackPercentage.text = "10%"
+        "30%".also { binding.breakfastPercentage.text = it }
+        "30%".also { binding.lunchPercentage.text = it }
+        "30%".also { binding.dinnerPercentage.text = it }
+        "10%".also { binding.snackPercentage.text = it }
     }
 
     private fun validateInputs(): Boolean {

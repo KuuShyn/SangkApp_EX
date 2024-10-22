@@ -31,7 +31,7 @@ class RecipeInfoFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_recipe_info, container, false)
 
         // Initialize views
-        val recipeTitleTextView = view.findViewById<TextView>(R.id.recipeTitle)
+        val recipeTitleTextView = view.findViewById<TextView>(R.id.foodName)
         ingredientsRecyclerView = view.findViewById(R.id.ingredientsRecyclerView)
 
         // Set recipe title

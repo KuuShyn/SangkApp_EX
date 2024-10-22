@@ -6,9 +6,58 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+
+
+
+        <!-- Date Navigation Buttons -->
+        <LinearLayout
+            android:id="@+id/dateNavigationLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Previous Button -->
+            <ImageButton
+                android:id="@+id/previousButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/baseline_chevron_left_24"
+                android:contentDescription="Previous Date"/>
+
+            <!-- Date Text -->
+            <TextView
+                android:id="@+id/currentDateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="October 7, 2024"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Next Button -->
+            <ImageButton
+                android:id="@+id/nextButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/baseline_chevron_right_24"
+                android:contentDescription="Next Date" />
+        </LinearLayout>
+
 
         <!-- Replace CardView with MaterialCardView -->
         <com.google.android.material.card.MaterialCardView
@@ -21,7 +70,8 @@
             app:cardElevation="6dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/dateNavigationLayout"
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -29,7 +79,7 @@
                 android:padding="18dp">
 
                 <!-- ArcProgress for the outer arc -->
-                <com.juanarton.arcprogressbar.ArcProgressBar
+                <com.thesis.sangkapp_ex.ui.ArcProgressBar
                     android:id="@+id/arc_img"
                     android:layout_width="155dp"
                     android:layout_height="155dp"
@@ -200,7 +250,7 @@
                         android:id="@+id/circularProgressIndicatorProteins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:progress="100"
+                        android:progress="55"
                         app:indicatorColor="@color/pink_700"
                         app:indicatorSize="48dp"
                         app:trackThickness="4dp" />
