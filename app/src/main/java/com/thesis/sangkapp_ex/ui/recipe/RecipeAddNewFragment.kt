@@ -3,6 +3,7 @@ package com.thesis.sangkapp_ex.ui.recipe
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +16,14 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FirebaseFirestore
+import com.thesis.sangkapp_ex.FoodNutrients
 import com.thesis.sangkapp_ex.JsonUtils
 import com.thesis.sangkapp_ex.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class RecipeAddNewFragment : Fragment() {
     interface OnRecipeAddedListener {
@@ -41,6 +44,9 @@ class RecipeAddNewFragment : Fragment() {
     // Firestore instance
     private val firestore = FirebaseFirestore.getInstance()
 
+    // List to hold all FoodNutrients loaded from JSON
+    private var allFoodNutrients: List<FoodNutrients> = emptyList()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         listener = parentFragment as? OnRecipeAddedListener
@@ -53,7 +59,7 @@ class RecipeAddNewFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val view = inflater.inflate(R.layout.fragment_recipe_add_new, container, false)
 
@@ -72,17 +78,17 @@ class RecipeAddNewFragment : Fragment() {
             saveRecipeToFirestore()
         }
 
-        // Load food names asynchronously
-        loadFoodNames()
+        // Load food names and nutrient data asynchronously
+        loadFoodNamesAndNutrients()
 
         return view
     }
 
-    private fun loadFoodNames() {
+    private fun loadFoodNamesAndNutrients() {
         // Use Coroutines to load data off the main thread
         CoroutineScope(Dispatchers.IO).launch {
-            val nutrientsList = JsonUtils.loadPhilfctDb(requireContext())
-            foodNames = nutrientsList.map { it.foodNameAndDescription }.distinct()
+            allFoodNutrients = JsonUtils.loadPhilfctDb(requireContext())
+            foodNames = allFoodNutrients.map { it.foodNameAndDescription }.distinct()
 
             withContext(Dispatchers.Main) {
                 // Add the first set of fields automatically after loading
@@ -164,9 +170,9 @@ class RecipeAddNewFragment : Fragment() {
         val ingredients = mutableListOf<Ingredient>()
         for (fields in ingredientQuantityFieldsList) {
             val ingredientName = fields.ingredientAutoComplete?.text.toString().trim()
-            val quantity = fields.quantityEditText?.text.toString().trim()
+            val quantityText = fields.quantityEditText?.text.toString().trim()
 
-            if (ingredientName.isEmpty() || quantity.isEmpty()) {
+            if (ingredientName.isEmpty() || quantityText.isEmpty()) {
                 Toast.makeText(
                     requireContext(),
                     "Please fill all ingredient fields",
@@ -175,23 +181,27 @@ class RecipeAddNewFragment : Fragment() {
                 return
             }
 
-            ingredients.add(Ingredient(name = ingredientName, quantity = quantity))
+            // Validate quantity as a positive number
+            val quantity = quantityText.toFloatOrNull()
+            if (quantity == null || quantity <= 0f) {
+                fields.quantityEditText?.error = "Enter a valid quantity in grams"
+                return
+            }
+
+            // Convert quantity back to String to match Ingredient data class
+            ingredients.add(Ingredient(name = ingredientName, quantity = quantityText))
         }
 
-        // Assume dummy nutrient data or calculated nutrients
-        val nutrients = Nutrients(
-            carbohydrates = "20g", proteins = "30g", fats = "15g",
-            fibers = "5g", sugars = "10g", cholesterol = "0g", sodium = "1g",
-            calcium = "22mg", iron = "1.3mg", vitaminABetaK = "65µg",
-            vitaminARetinol = "5µg", vitaminB1 = "0.14mg", vitaminB2 = "0.03mg",
-            vitaminB3 = "1.3mg", vitaminC5 = "0mg"
-        )
+        // Calculate total nutrients and calories
+        val (totalNutrients, totalCalories) = calculateTotalNutrients(ingredients)
 
+        // Create the Recipe object with calories
         val recipe = Recipe(
             name = dishName,
-            servings = servings,
+            calories = totalCalories.toInt(), // Convert Float to Int
+            quantity = servings,
             ingredients = ingredients,
-            nutrients = nutrients
+            nutrients = totalNutrients
         )
 
         // Get user ID from SharedPreferences
@@ -203,15 +213,124 @@ class RecipeAddNewFragment : Fragment() {
                 .collection("recipes")
                 .add(recipe)
                 .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Recipe added successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Recipe added successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     listener?.onRecipeAdded(recipe)
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Failed to add recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to add recipe: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         } else {
             Toast.makeText(requireContext(), "Error: User ID not found", Toast.LENGTH_LONG).show()
         }
     }
 
+    /**
+     * Calculates the total nutrients and calories for the recipe based on the ingredients.
+     *
+     * @param ingredients The list of ingredients in the recipe.
+     * @return A Pair containing the total Nutrients object and total calories as Float.
+     */
+    private fun calculateTotalNutrients(ingredients: List<Ingredient>): Pair<Nutrients, Float> {
+        // Initialize totals as Float
+        var totalCarbohydrates = 0f
+        var totalProteins = 0f
+        var totalFats = 0f
+        var totalFibers = 0f
+        var totalSugars = 0f
+        var totalCholesterol = 0f
+        var totalSodium = 0f
+        var totalCalcium = 0f
+        var totalIron = 0f
+        var totalVitaminABetaK = 0f
+        var totalVitaminARetinol = 0f
+        var totalVitaminB1 = 0f
+        var totalVitaminB2 = 0f
+        var totalVitaminB3 = 0f
+        var totalVitaminC5 = 0f
+        var totalCalories = 0f // Initialize total calories
+
+        for (ingredient in ingredients) {
+            // Find the corresponding FoodNutrients
+            val foodNutrients = allFoodNutrients.find {
+                it.foodNameAndDescription.equals(ingredient.name, ignoreCase = true)
+            }
+
+            if (foodNutrients == null) {
+                Toast.makeText(
+                    requireContext(),
+                    "Nutrient data not found for ingredient: ${ingredient.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                continue
+            }
+
+            // Parse the quantity from String to Float
+            val quantity = ingredient.quantity.toFloatOrNull()
+            if (quantity == null || quantity <= 0f) {
+                Toast.makeText(
+                    requireContext(),
+                    "Invalid quantity for ingredient: ${ingredient.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                continue
+            }
+
+            // Assume that nutrient values are per 100g
+            val factor = quantity / 100f
+
+            // Helper function to parse nutrient strings to Float
+            fun parseNutrient(value: String?): Float {
+                return value?.toFloatOrNull() ?: 0f
+            }
+
+            // Sum up the nutrients
+            totalCarbohydrates += parseNutrient(foodNutrients.carbohydrateTotal?.toString()) * factor
+            totalProteins += parseNutrient(foodNutrients.protein?.toString()) * factor
+            totalFats += parseNutrient(foodNutrients.totalFat?.toString()) * factor
+            totalFibers += parseNutrient(foodNutrients.fiberTotalDietary?.toString()) * factor
+            totalSugars += parseNutrient(foodNutrients.sugarsTotal?.toString()) * factor
+            totalCholesterol += parseNutrient(foodNutrients.cholesterol?.toString()) * factor
+            totalSodium += parseNutrient(foodNutrients.sodiumNa?.toString()) * factor
+            totalCalcium += parseNutrient(foodNutrients.calciumCa?.toString()) * factor
+            totalIron += parseNutrient(foodNutrients.ironFe?.toString()) * factor
+            totalVitaminABetaK += parseNutrient(foodNutrients.betaCarotene?.toString()) * factor
+            totalVitaminARetinol += parseNutrient(foodNutrients.retinolVitaminA?.toString()) * factor
+            totalVitaminB1 += parseNutrient(foodNutrients.thiaminVitaminB1?.toString()) * factor
+            totalVitaminB2 += parseNutrient(foodNutrients.riboflavinVitaminB2?.toString()) * factor
+            totalVitaminB3 += parseNutrient(foodNutrients.niacin?.toString()) * factor
+            totalVitaminC5 += parseNutrient(foodNutrients.ascorbicAcidVitaminC?.toString()) * factor
+
+            // Calculate calories
+            totalCalories += parseNutrient(foodNutrients.energyCalculated?.toString()) * factor
+        }
+
+        // Convert totals back to String with appropriate formatting (e.g., two decimal places)
+        val totalNutrients = Nutrients(
+            carbohydrates = String.format(Locale.getDefault(), "%.2f g", totalCarbohydrates),
+            proteins = String.format(Locale.getDefault(), "%.2f g", totalProteins),
+            fats = String.format(Locale.getDefault(), "%.2f g", totalFats),
+            fibers = String.format(Locale.getDefault(), "%.2f g", totalFibers),
+            sugars = String.format(Locale.getDefault(), "%.2f g", totalSugars),
+            cholesterol = String.format(Locale.getDefault(), "%.2f mg", totalCholesterol),
+            sodium = String.format(Locale.getDefault(), "%.2f mg", totalSodium),
+            calcium = String.format(Locale.getDefault(), "%.2f mg", totalCalcium),
+            iron = String.format(Locale.getDefault(), "%.2f mg", totalIron),
+            vitaminABetaK = String.format(Locale.getDefault(), "%.2f µg", totalVitaminABetaK),
+            vitaminARetinol = String.format(Locale.getDefault(), "%.2f µg", totalVitaminARetinol),
+            vitaminB1 = String.format(Locale.getDefault(), "%.2f mg", totalVitaminB1),
+            vitaminB2 = String.format(Locale.getDefault(), "%.2f mg", totalVitaminB2),
+            vitaminB3 = String.format(Locale.getDefault(), "%.2f mg", totalVitaminB3),
+            vitaminC5 = String.format(Locale.getDefault(), "%.2f mg", totalVitaminC5)
+        )
+
+        return Pair(totalNutrients, totalCalories)
+    }
 }

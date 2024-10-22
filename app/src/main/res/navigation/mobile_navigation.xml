@@ -111,6 +111,18 @@
         <action
             android:id="@+id/action_nav_log_food_to_recipeInfoFragment"
             app:destination="@id/recipeInfoFragment" />
+        <action
+            android:id="@+id/action_nav_log_food_to_logFeaturedInfoFragment"
+            app:destination="@id/logFeaturedInfoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/logFeaturedInfoFragment"
+        android:name="com.thesis.sangkapp_ex.ui.foodLog.LogFeaturedInfoFragment"
+        android:label="Log Featured Info">
+        <argument
+            android:name="selectedRecipe"
+            app:argType="com.thesis.sangkapp_ex.ui.recipe.Recipe" />
     </fragment>
 
 

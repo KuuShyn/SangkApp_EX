@@ -17,11 +17,11 @@ import com.thesis.sangkapp_ex.ui.recipe.RecipeAdapter
 
 class LogMyRecipeFragment : Fragment() {
 
-    interface OnRecipeSelectedListener {
-        fun onRecipeSelected(recipe: Recipe)
+    interface OnMyRecipeSelectedListener {
+        fun onMyRecipeSelected(recipe: Recipe)
     }
 
-    private var listener: OnRecipeSelectedListener? = null
+    private var listener: OnMyRecipeSelectedListener? = null
 
     private lateinit var recipeAdapter: RecipeAdapter
     private lateinit var recyclerView: RecyclerView
@@ -33,7 +33,7 @@ class LogMyRecipeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        listener = parentFragment as? OnRecipeSelectedListener
+        listener = parentFragment as? OnMyRecipeSelectedListener
     }
 
     override fun onDetach() {
@@ -51,7 +51,7 @@ class LogMyRecipeFragment : Fragment() {
 
         // Initialize RecyclerView
         recipeAdapter = RecipeAdapter(recipesList) { selectedRecipe ->
-            listener?.onRecipeSelected(selectedRecipe)
+            listener?.onMyRecipeSelected(selectedRecipe)
         }
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = recipeAdapter
@@ -63,26 +63,32 @@ class LogMyRecipeFragment : Fragment() {
     }
 
     private fun fetchRecipesFromFirestore() {
-        // Listen for real-time updates
-        firestoreListener = firestore.collection("recipes")
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Log.w("com.thesis.sangkapp_ex.ui.foodLog.LogMyRecipeFragment", "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-
-                if (snapshots != null) {
-                    recipesList.clear()
-                    for (doc in snapshots) {
-                        val recipe = doc.toObject(Recipe::class.java)
-                        recipesList.add(recipe)
+        val userId = context?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            ?.getString("USER_ID", null)
+        if (userId != null) {
+            firestore.collection("users").document(userId).collection("recipes")
+                .addSnapshotListener { snapshots, e ->
+                    if (e != null) {
+                        Log.w("LogMyRecipeHistory", "Listen failed.", e)
+                        return@addSnapshotListener
                     }
-                    recipeAdapter.notifyDataSetChanged()
-                } else {
-                    Log.d("com.thesis.sangkapp_ex.ui.foodLog.LogMyRecipeFragment", "Current data: null")
+
+                    if (snapshots != null) {
+                        recipesList.clear()
+                        for (doc in snapshots) {
+                            val recipe = doc.toObject(Recipe::class.java)
+                            recipesList.add(recipe)
+                        }
+                        recipeAdapter.notifyDataSetChanged()
+                    } else {
+                        Log.d("LogMyRecipeHistory", "Current data: null")
+                    }
                 }
-            }
+        } else {
+            Log.w("LogMyRecipeHistory", "User ID is null")
+        }
     }
-
-
 }
+
+
+

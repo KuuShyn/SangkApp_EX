@@ -13,7 +13,8 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.thesis.sangkapp_ex.R
 import com.thesis.sangkapp_ex.ui.recipe.Recipe
 
-class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnRecipeSelectedListener {
+class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnMyRecipeSelectedListener,
+    LogFeaturedFragment.OnLogFeaturedListener {
 
     private lateinit var toggleGroup: MaterialButtonToggleGroup
     private lateinit var featuredButton: MaterialButton
@@ -76,9 +77,16 @@ class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnRecipeSelectedListener
     }
 
     // Handle recipe selection and navigate to RecipeInfoFragment
-    override fun onRecipeSelected(recipe: Recipe) {
+    override fun onMyRecipeSelected(recipe: Recipe) {
         // Use SafeArgs to pass the selected recipe to RecipeInfoFragment
         val action = LogFoodFragmentDirections.actionNavLogFoodToRecipeInfoFragment(recipe)
         findNavController().navigate(action)
     }
+
+    override fun onLogFeaturedSelected(recipe: Recipe) {
+        val action = LogFoodFragmentDirections.actionNavLogFoodToLogFeaturedInfoFragment(recipe)
+        findNavController().navigate(action)
+    }
+
+
 }

@@ -20,7 +20,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.SangkApp_EX.AppBarOverlay" parent="ThemeOverlay.Material3.Light" />
+    <style name="Theme.SangkApp_EX.AppBarOverlay" parent="ThemeOverlay.Material3.Dark" />
 
     <style name="Theme.SangkApp_EX.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
 

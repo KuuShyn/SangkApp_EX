@@ -31,7 +31,7 @@ class RecipeInfoFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_recipe_info, container, false)
 
         // Initialize views
-        val recipeTitleTextView = view.findViewById<TextView>(R.id.foodName)
+        val recipeTitleTextView = view.findViewById<TextView>(R.id.recipeTitle)
         ingredientsRecyclerView = view.findViewById(R.id.ingredientsRecyclerView)
 
         // Set recipe title
@@ -54,7 +54,8 @@ class RecipeInfoFragment : Fragment() {
         view.findViewById<TextView>(R.id.calciumValue).text = recipe.nutrients.calcium
         view.findViewById<TextView>(R.id.ironValue).text = recipe.nutrients.iron
         view.findViewById<TextView>(R.id.vitaminABetaKValue).text = recipe.nutrients.vitaminABetaK
-        view.findViewById<TextView>(R.id.vitaminARetinolValue).text = recipe.nutrients.vitaminARetinol
+        view.findViewById<TextView>(R.id.vitaminARetinolValue).text =
+            recipe.nutrients.vitaminARetinol
         view.findViewById<TextView>(R.id.vitaminB1Value).text = recipe.nutrients.vitaminB1
         view.findViewById<TextView>(R.id.vitaminB2Value).text = recipe.nutrients.vitaminB2
         view.findViewById<TextView>(R.id.vitaminB3Value).text = recipe.nutrients.vitaminB3

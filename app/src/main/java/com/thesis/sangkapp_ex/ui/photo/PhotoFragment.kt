@@ -25,7 +25,6 @@ import com.thesis.sangkapp_ex.DepthExtractor
 import com.thesis.sangkapp_ex.Detector
 import com.thesis.sangkapp_ex.FoodDensity
 import com.thesis.sangkapp_ex.FoodNutrients
-import com.thesis.sangkapp_ex.GlobalVariables.Companion.remainingCalories
 import com.thesis.sangkapp_ex.JsonUtils
 import com.thesis.sangkapp_ex.databinding.FragmentPhotoBinding
 import com.thesis.sangkapp_ex.ui.OverlayView
@@ -40,7 +39,15 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
     // Global variables
     private var realVolume: Float = 0f
     private var portionWeight: Float = 0f
-    private var recommendation: String = ""
+
+
+    private var dishesDetected: Int = 0
+    private var combinedCalories: Int = 0
+    private var calories: Float = 0f
+    private var carbs: Float = 0f
+    private var proteins: Float = 0f
+    private var fats: Float = 0f
+
 
     // List to store NutrientEstimationResult corresponding to boundingBoxes
     private val nutrientEstimationResults = mutableListOf<NutrientEstimationResult>()
@@ -115,6 +122,10 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
             } else {
                 Log.d("PhotoFragment", "Camera Params not available yet")
             }
+        }
+
+        binding.fab.setOnClickListener {
+            showNutritionBottomSheet()
         }
     }
 
@@ -202,16 +213,17 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
                 // Check if the fragment is still added before updating UI
                 if (!isAdded) return@launch
 
+                // Update stored nutritional data
+                dishesDetected = results.detectedFoodCount
+                combinedCalories = results.totalCalories.toInt()
+                calories = results.totalCalories
+                carbs = results.totalCarbs
+                proteins = results.totalProteins
+                fats = results.totalFats
+
                 // Update UI with the results
                 if (results.detectedFoodCount > 0) {
-                    showNutritionBottomSheet(
-                        results.detectedFoodCount,
-                        results.totalCalories.toInt(),
-                        results.totalCalories,
-                        results.totalCarbs,
-                        results.totalProteins,
-                        results.totalFats
-                    )
+                    showNutritionBottomSheet()
                 }
             } catch (e: Exception) {
                 Log.e("PhotoFragment", "Error during depth prediction on cropped images", e)
@@ -312,30 +324,35 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
     }
 
     // Function to display the NutritionBottomSheet with calculated nutrients
-    private fun showNutritionBottomSheet(
-        dishesDetected: Int,
-        combinedCalories: Int,
-        calories: Float,
-        carbs: Float,
-        proteins: Float,
-        fats: Float
-    ) {
+    private fun showNutritionBottomSheet() {
         if (isAdded) { // Ensure fragment is still attached
             try {
-                val bottomSheet = NutritionBottomSheet.newInstance(
-                    dishesDetected,
-                    combinedCalories,
-                    calories,
-                    carbs,
-                    proteins,
-                    fats
-                )
-                bottomSheet.show(parentFragmentManager, "NutritionBottomSheet")
+                // Check if nutritional data is available
+                if (dishesDetected > 0) {
+                    // Check if the BottomSheet is already shown
+                    val existingBottomSheet = parentFragmentManager.findFragmentByTag(NutritionBottomSheet.TAG)
+                    if (existingBottomSheet == null) {
+                        val bottomSheet = NutritionBottomSheet.newInstance(
+                            dishesDetected,
+                            combinedCalories,
+                            calories,
+                            carbs,
+                            proteins,
+                            fats
+                        )
+                        bottomSheet.show(parentFragmentManager, NutritionBottomSheet.TAG)
+                    } else {
+                        Log.d("PhotoFragment", "NutritionBottomSheet is already shown.")
+                    }
+                } else {
+                    toast("Nutritional data is not available yet.")
+                }
             } catch (e: IllegalStateException) {
                 Log.e("PhotoFragment", "Failed to show NutritionBottomSheet", e)
             }
         }
     }
+
 
 
     private fun convertPixelToRealWorldWidth(

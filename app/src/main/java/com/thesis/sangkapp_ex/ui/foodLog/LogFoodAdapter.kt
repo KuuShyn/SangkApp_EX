@@ -37,7 +37,8 @@ class LogFoodAdapter(
 
     // Inflate the layout for each food item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.food_item_card, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.food_item_card, parent, false)
         return FoodViewHolder(view)
     }
 

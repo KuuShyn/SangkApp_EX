@@ -1,5 +1,6 @@
 package com.thesis.sangkapp_ex.ui.foodLog
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,17 @@ import com.thesis.sangkapp_ex.R
 import com.thesis.sangkapp_ex.ui.recipe.Recipe
 
 class LogFeaturedFragment : Fragment() {
+
+    interface OnLogFeaturedListener {
+        fun onLogFeaturedSelected(recipe: Recipe)
+    }
+
+    private var listener: OnLogFeaturedListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = parentFragment as? OnLogFeaturedListener
+    }
 
     private lateinit var foodItemsRecyclerView: RecyclerView
     private lateinit var logFoodAdapter: LogFoodAdapter
@@ -39,20 +51,14 @@ class LogFeaturedFragment : Fragment() {
         // Set up a GridLayoutManager with 2 columns
         foodItemsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        // Initialize Adapter with a click listener
-        logFoodAdapter = LogFoodAdapter(foodList) { selectedRecipe ->
-            // Handle item click, for example, navigate to RecipeInfoFragment
-            onFoodItemClick(selectedRecipe)
+        // Initialize the adapter with the food list
+        logFoodAdapter = LogFoodAdapter(foodList) { recipe ->
+            listener?.onLogFeaturedSelected(recipe)
         }
 
         // Set the adapter
         foodItemsRecyclerView.adapter = logFoodAdapter
 
         return view
-    }
-
-    private fun onFoodItemClick(recipe: Recipe) {
-        // Handle the food item click (e.g., navigate to another fragment)
-        // This could involve using Navigation Component with SafeArgs or another navigation method
     }
 }

@@ -20,7 +20,7 @@ class RecipeAdapter(
         fun bind(recipe: Recipe) {
             nameTextView.text = recipe.name
             "${recipe.calories} kcal".also { caloriesTextView.text = it }
-            "${recipe.servings} g".also { quantityTextView.text = it }
+            "${recipe.quantity} g".also { quantityTextView.text = it }
 
             itemView.setOnClickListener {
                 onItemClick(recipe)

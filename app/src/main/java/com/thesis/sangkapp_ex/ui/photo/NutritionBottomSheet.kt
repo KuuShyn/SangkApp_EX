@@ -55,8 +55,8 @@ class NutritionBottomSheet : BottomSheetDialogFragment() {
         val proteinsText: TextView = view.findViewById(R.id.centerTextProteins)
 
         val fatsProgress: CircularProgressIndicator =
-            view.findViewById(R.id.circularProgressIndicatorYellow)
-        val fatsText: TextView = view.findViewById(R.id.centerTextYellow)
+            view.findViewById(R.id.circularProgressIndicatorFats)
+        val fatsText: TextView = view.findViewById(R.id.centerTextFats)
 
         // Retrieve the arguments passed from PhotoFragment
         val args = arguments
@@ -110,8 +110,8 @@ class NutritionBottomSheet : BottomSheetDialogFragment() {
         progressIndicator.progress = progress
         centerTextView.text = String.format(Locale.getDefault(), "%.1f %s", value, unit)
     }
-
     companion object {
+        const val TAG = "NutritionBottomSheet"
         fun newInstance(
             dishesDetected: Int,
             combinedCalories: Int,

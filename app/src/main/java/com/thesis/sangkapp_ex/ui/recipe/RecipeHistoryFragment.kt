@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.thesis.sangkapp_ex.R
@@ -62,24 +63,29 @@ class RecipeHistoryFragment : Fragment() {
     }
 
     private fun fetchRecipesFromFirestore() {
-        // Listen for real-time updates
-        firestoreListener = firestore.collection("recipes")
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) {
-                    Log.w("RecipeHistory", "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-
-                if (snapshots != null) {
-                    recipesList.clear()
-                    for (doc in snapshots) {
-                        val recipe = doc.toObject(Recipe::class.java)
-                        recipesList.add(recipe)
+        val userId = context?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            ?.getString("USER_ID", null)
+        if (userId != null) {
+            firestore.collection("users").document(userId).collection("recipes")
+                .addSnapshotListener { snapshots, e ->
+                    if (e != null) {
+                        Log.w("RecipeHistory", "Listen failed.", e)
+                        return@addSnapshotListener
                     }
-                    recipeAdapter.notifyDataSetChanged()
-                } else {
-                    Log.d("RecipeHistory", "Current data: null")
+
+                    if (snapshots != null) {
+                        recipesList.clear()
+                        for (doc in snapshots) {
+                            val recipe = doc.toObject(Recipe::class.java)
+                            recipesList.add(recipe)
+                        }
+                        recipeAdapter.notifyDataSetChanged()
+                    } else {
+                        Log.d("RecipeHistory", "Current data: null")
+                    }
                 }
-            }
+        } else {
+            Log.w("RecipeHistory", "User ID is null")
+        }
     }
 }

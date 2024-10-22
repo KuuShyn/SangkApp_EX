@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
@@ -54,9 +55,6 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
     private lateinit var cameraExecutor: ExecutorService
 
     private lateinit var pickPhotoLauncher: ActivityResultLauncher<Intent>
-
-    private var isCameraStarting = false
-    private var isCameraActive = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -115,7 +113,8 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
     private fun bindListeners() {
         binding.apply {
             uploadButton.setOnClickListener {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                val intent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 pickPhotoLauncher.launch(intent)
             }
 
@@ -131,14 +130,21 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
                     object : ImageCapture.OnImageCapturedCallback() {
                         override fun onCaptureSuccess(image: ImageProxy) {
                             lifecycleScope.launch(Dispatchers.IO) {
-                                val uri = saveImageToUri(image)
-                                if (uri != null) {
-                                    navigateToPhotoFragment(uri)
-                                } else {
-                                    toast("Failed to save image")
+                                try {
+                                    // Process the image and save it
+                                    val uri = saveImageToUri(image)
+                                    if (uri != null) {
+                                        navigateToPhotoFragment(uri)
+                                    } else {
+                                        toast("Failed to save image")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e(TAG, "Error processing image: ${e.message}", e)
+                                } finally {
+                                    // Close the image after all processing is done
+                                    image.close()
                                 }
                             }
-                            image.close()
                         }
 
                         override fun onError(exception: ImageCaptureException) {
@@ -157,15 +163,60 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
     }
 
     private fun saveImageToUri(image: ImageProxy): Uri? {
-        val bitmap = imageProxyToBitmap(image)
+        return when (image.format) {
+            ImageFormat.JPEG -> saveJpegImageToUri(image)
+            ImageFormat.YUV_420_888 -> saveYuvImageToUri(image)
+            else -> {
+                Log.e(TAG, "Unsupported image format: ${image.format}")
+                null
+            }
+        }
+    }
+
+    private fun saveJpegImageToUri(image: ImageProxy): Uri? {
+        val buffer = image.planes[0].buffer
+        val bytes = ByteArray(buffer.remaining())
+        buffer.get(bytes)
 
         val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "captured_image_${System.currentTimeMillis()}.jpg")
+            put(
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                "captured_image_${System.currentTimeMillis()}.jpg"
+            )
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/sangkapp")
         }
 
-        val uri = requireContext().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val uri = requireContext().contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+
+        uri?.let {
+            requireContext().contentResolver.openOutputStream(it).use { outputStream ->
+                outputStream?.write(bytes)
+            }
+        }
+
+        return uri
+    }
+
+    private fun saveYuvImageToUri(image: ImageProxy): Uri? {
+        val bitmap = imageProxyToBitmap(image)
+
+        val contentValues = ContentValues().apply {
+            put(
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                "captured_image_${System.currentTimeMillis()}.jpg"
+            )
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/sangkapp")
+        }
+
+        val uri = requireContext().contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
 
         uri?.let {
             requireContext().contentResolver.openOutputStream(it).use { outputStream ->
@@ -189,8 +240,8 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
     }
 
     private fun startCamera() {
-        if (isCameraStarting || isCameraActive) return
-        isCameraStarting = true
+
+
         Log.d(TAG, "Starting camera...")
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
@@ -198,19 +249,17 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
                 cameraProvider = cameraProviderFuture.get()
                 Log.d(TAG, "Camera provider obtained")
                 bindCameraUseCases()
-                isCameraActive = true
+
             } catch (e: Exception) {
                 Log.e(TAG, "Error starting camera: ${e.message}", e)
                 toast("Failed to start camera")
             } finally {
-                isCameraStarting = false
+
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-        // Convert YUV to Bitmap (implement this based on your ImageAnalysis format)
-        // For OUTPUT_IMAGE_FORMAT_YUV_420_888, use the following conversion
         val yBuffer = image.planes[0].buffer
         val uBuffer = image.planes[1].buffer
         val vBuffer = image.planes[2].buffer
@@ -226,7 +275,13 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
         vBuffer.get(nv21, ySize, vSize)
         uBuffer.get(nv21, ySize + vSize, uSize)
 
-        val yuvImage = android.graphics.YuvImage(nv21, android.graphics.ImageFormat.NV21, image.width, image.height, null)
+        val yuvImage = android.graphics.YuvImage(
+            nv21,
+            android.graphics.ImageFormat.NV21,
+            image.width,
+            image.height,
+            null
+        )
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(android.graphics.Rect(0, 0, image.width, image.height), 100, out)
         val imageBytes = out.toByteArray()
@@ -234,7 +289,8 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
     }
 
     private fun bindCameraUseCases() {
-        val cameraProvider = cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
+        val cameraProvider =
+            cameraProvider ?: throw IllegalStateException("Camera initialization failed.")
         val rotation = binding.viewFinder.display.rotation
 
         val cameraSelector = CameraSelector.Builder()
@@ -304,7 +360,11 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
         if (granted) {
             startCamera()
         } else {
-            Toast.makeText(requireContext(), "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Permissions not granted by the user.",
+                Toast.LENGTH_SHORT
+            ).show()
             // Optionally, navigate back or disable camera functionality
         }
     }
@@ -316,6 +376,16 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            requestPermissionLauncher.launch(REQUIRED_PERMISSIONS)
+        }
+    }
+
 
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
         if (view != null && isAdded) {
@@ -338,8 +408,9 @@ class CameraFragment : Fragment(), Detector.DetectorListener {
     companion object {
         private const val TAG = "CameraFragment"
         private val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
             // Add other permissions if necessary
+
         )
     }
 }
