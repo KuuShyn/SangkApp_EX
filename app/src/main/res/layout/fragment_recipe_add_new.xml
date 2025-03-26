@@ -21,7 +21,8 @@
             android:id="@+id/dynamicFieldsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <!-- Dish Name -->
             <com.google.android.material.textview.MaterialTextView
@@ -54,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="# of Servings"
+                android:text="# of Servings (grams)"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_semibold" />
@@ -178,7 +179,7 @@
         android:id="@+id/addRecipeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_margin="16dp"
         android:paddingStart="36dp"
         android:paddingEnd="36dp"
         android:fontFamily="@font/poppins_semibold"

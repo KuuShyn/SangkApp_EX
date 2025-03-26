@@ -27,7 +27,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class LogFeaturedInfoFragment : Fragment() {
+class LogMyRecipeInfoFragment : Fragment() {
 
     private var _binding: FragmentLogFeaturedInfoBinding? = null
     private val binding get() = _binding!!
@@ -48,8 +48,10 @@ class LogFeaturedInfoFragment : Fragment() {
         val foodName = args.foodName.name
         mealType = args.mealType.toString()
 
-        recipe = loadRecipeFromNutrientsJson(foodName)
+        // Load from Firestore instead of JSON
+        fetchRecipeFromFirestore(foodName)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,7 +67,7 @@ class LogFeaturedInfoFragment : Fragment() {
         setupDropdownMenu()
         fetchAllocationsAndConsumedCalories()
 
-        setupRecipeInfo()
+//        setupRecipeInfo()
         updateButtonAndIcon()
 
         binding.showHidebutton.setOnClickListener {
@@ -74,20 +76,6 @@ class LogFeaturedInfoFragment : Fragment() {
 
         binding.addLogButton.setOnClickListener {
             addLogToFirestore()
-        }
-
-        binding.addLogButton.isEnabled = getServingMultiplier() > 0
-
-
-        if (mealType.isNotBlank()) {
-            binding.dropdownMenu.setText(mealType, false)
-        }
-
-        binding.servingSizeInput.addTextChangedListener {
-            setupRecipeInfo()
-            if (mealType.isNotBlank()) {
-                updateProgressIndicators(mealType)
-            }
         }
 
     }
@@ -340,49 +328,79 @@ class LogFeaturedInfoFragment : Fragment() {
 
     private fun getServingMultiplier(): Double {
         val input = binding.servingSizeInput.text.toString()
-        val grams = input.toDoubleOrNull()?.takeIf { it > 0 } ?: 100.0
-        return grams / 100.0
+        val inputGrams = input.toDoubleOrNull()?.takeIf { it > 0 } ?: recipe.servings.toDouble()
+        return inputGrams / recipe.servings
     }
 
-    private fun loadRecipeFromNutrientsJson(foodName: String): Recipe {
-        val json = requireContext().assets.open("dish_nutrients.json")
-            .bufferedReader().use { it.readText() }
 
-        val gson = Gson()
-        val type = object : TypeToken<List<Map<String, Any>>>() {}.type
-        val nutrientsList: List<Map<String, Any>> = gson.fromJson(json, type)
+    private fun fetchRecipeFromFirestore(foodName: String) {
+        if (currentUserId == null) return
 
-        val matched = nutrientsList.firstOrNull {
-            (it["Food Name and Description"] as? String)?.equals(foodName, ignoreCase = true) == true
-        }
+        db.collection("users").document(currentUserId)
+            .collection("recipes")
+            .whereEqualTo("name", foodName)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { docs ->
+                if (!docs.isEmpty) {
+                    val doc = docs.documents.first()
+                    val servings = doc.getLong("servings")?.toInt() ?: 100
 
-        val calories = matched?.get("Energy, calculated")?.toString()?.toDoubleOrNull()?: 0.0
+                    val nutrientsMap = doc.get("nutrients") as? Map<*, *> ?: emptyMap<String, String>()
+
+                    val nutrients = Nutrients(
+                        carbohydrates = nutrientsMap["carbohydrates"]?.toString() ?: "-",
+                        proteins = nutrientsMap["proteins"]?.toString() ?: "-",
+                        fats = nutrientsMap["fats"]?.toString() ?: "-",
+                        fibers = nutrientsMap["fibers"]?.toString() ?: "-",
+                        sugars = nutrientsMap["sugars"]?.toString() ?: "-",
+                        cholesterol = nutrientsMap["cholesterol"]?.toString() ?: "-",
+                        sodium = nutrientsMap["sodium"]?.toString() ?: "-",
+                        calcium = nutrientsMap["calcium"]?.toString() ?: "-",
+                        iron = nutrientsMap["iron"]?.toString() ?: "-",
+                        vitaminABetaK = nutrientsMap["vitaminABetaK"]?.toString() ?: "-",
+                        vitaminARetinol = nutrientsMap["vitaminARetinol"]?.toString() ?: "-",
+                        vitaminB1 = nutrientsMap["vitaminB1"]?.toString() ?: "-",
+                        vitaminB2 = nutrientsMap["vitaminB2"]?.toString() ?: "-",
+                        vitaminB3 = nutrientsMap["vitaminB3"]?.toString() ?: "-",
+                        vitaminC5 = nutrientsMap["vitaminC5"]?.toString() ?: "-"
+                    )
+
+                    val calories = doc.getDouble("calories") ?: 0.0
+                    val imageResId = R.drawable.sangkapp_placeholder
+
+                    recipe = Recipe(
+                        name = foodName,
+                        servings = servings,
+                        calories = calories,
+                        imageResId = imageResId,
+                        nutrients = nutrients
+                    )
+
+// 🟢 Move these here, AFTER recipe is initialized
+                    binding.addLogButton.isEnabled = getServingMultiplier() > 0
+                    setupRecipeInfo()
+
+                    if (mealType.isNotBlank()) {
+                        binding.dropdownMenu.setText(mealType, false)
+                        updateProgressIndicators(mealType)
+                    }
 
 
-        val nutrients = Nutrients(
-            carbohydrates = matched?.get("Carbohydrate, total")?.toString() ?: "-",
-            proteins = matched?.get("Protein")?.toString() ?: "-",
-            fats = matched?.get("Total Fat")?.toString() ?: "-",
-            fibers = matched?.get("Fiber, total dietary")?.toString() ?: "-",
-            sugars = matched?.get("Sugars, total")?.toString() ?: "-",
-            cholesterol = matched?.get("Cholesterol")?.toString() ?: "-",
-            sodium = matched?.get("Sodium, Na")?.toString() ?: "-",
-            calcium = matched?.get("Calcium, Ca")?.toString() ?: "-",
-            iron = matched?.get("Iron, Fe")?.toString() ?: "-",
-            vitaminABetaK = matched?.get("beta-Carotene")?.toString() ?: "-",
-            vitaminARetinol = matched?.get("Retinol, Vitamin A")?.toString() ?: "-",
-            vitaminB1 = matched?.get("Thiamin, Vitamin B1")?.toString() ?: "-",
-            vitaminB2 = matched?.get("Riboflavin, Vitamin B2")?.toString() ?: "-",
-            vitaminB3 = matched?.get("Niacin")?.toString() ?: "-",
-            vitaminC5 = matched?.get("Ascorbic Acid, Vitamin C")?.toString() ?: "-"
-        )
 
-        val drawableName = foodName.lowercase().replace(" ", "_")
-        val imageResId = resources.getIdentifier(drawableName, "drawable", requireContext().packageName)
-            .takeIf { it != 0 } ?: R.drawable.sangkapp_placeholder
+                    // Now that recipe is loaded, setup UI
+                    setupRecipeInfo()
+                    updateProgressIndicators(mealType)
 
-        return Recipe(name = foodName, calories = calories, imageResId = imageResId, nutrients = nutrients)
+                } else {
+                    Toast.makeText(requireContext(), "Recipe not found ❌", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Failed to load recipe: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
+
 
 
 

@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.thesis.sangkapp_ex.BoundingBox
+import com.thesis.sangkapp_ex.Constants
 import com.thesis.sangkapp_ex.Constants.LABELS_PATH
 import com.thesis.sangkapp_ex.Constants.MODEL_PATH
 import com.thesis.sangkapp_ex.DepthAnything
@@ -44,6 +45,7 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
 
     // List to store NutrientEstimationResult corresponding to boundingBoxes
     private val nutrientEstimationResults = mutableListOf<NutrientEstimationResult>()
+    private var lastPredictionResults: DepthPredictionResults? = null
 
     private var _binding: FragmentPhotoBinding? = null
     private val binding get() = _binding!!
@@ -69,6 +71,7 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadFoodData()
+        binding.fab.visibility = View.GONE
 
         binding.depthMapView.visibility = View.GONE
 
@@ -107,7 +110,7 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
                 detector = Detector(requireContext(), MODEL_PATH, LABELS_PATH, this@PhotoFragment) {
                     toast(it)
                 }
-                depthAnything = DepthAnything(requireContext(), "fused_model_uint8_512.onnx")
+                depthAnything = DepthAnything(requireContext(), Constants.DEPTH_MODEL)
 
                 binding.imageView.setImageBitmap(bitmap)
 
@@ -115,6 +118,21 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
             } else {
                 Log.d("PhotoFragment", "Camera Params not available yet")
             }
+
+            binding.fab.setOnClickListener {
+                lastPredictionResults?.let { result ->
+                    showNutritionBottomSheet(
+                        dishesDetected = result.detectedFoodCount,
+                        combinedCalories = result.totalCalories.toInt(),
+                        calories = result.totalCalories,
+                        carbs = result.totalCarbs,
+                        proteins = result.totalProteins,
+                        fats = result.totalFats
+                    )
+                } ?: toast("Nutritional data is not available yet.")
+            }
+
+
         }
     }
 
@@ -134,6 +152,8 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
                         params.sensorHeight
                     )
                 }
+                binding.fab.visibility = View.VISIBLE
+
             }
         }
     }
@@ -190,6 +210,7 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
         showLoadingScreen()
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+
                 // Perform background processing
                 val results = withContext(Dispatchers.Default) {
                     performDepthPrediction(
@@ -197,13 +218,17 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
                         sensorWidth,
                         sensorHeight
                     )
+
                 }
+
 
                 // Check if the fragment is still added before updating UI
                 if (!isAdded) return@launch
 
                 // Update UI with the results
                 if (results.detectedFoodCount > 0) {
+                    lastPredictionResults = results
+
                     showNutritionBottomSheet(
                         results.detectedFoodCount,
                         results.totalCalories.toInt(),
@@ -463,10 +488,10 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
     }
 
     private fun cropBitmapForBoundingBox(bitmap: Bitmap, box: BoundingBox): Bitmap {
-        val x1 = (box.x1 * bitmap.width).toInt().coerceIn(0, bitmap.width)
-        val y1 = (box.y1 * bitmap.height).toInt().coerceIn(0, bitmap.height)
-        val width = ((box.x2 - box.x1) * bitmap.width).toInt().coerceIn(0, bitmap.width - x1)
-        val height = ((box.y2 - box.y1) * bitmap.height).toInt().coerceIn(0, bitmap.height - y1)
+        val x1 = (box.x1 * bitmap.width).toInt().coerceIn(0, bitmap.width - 1)
+        val y1 = (box.y1 * bitmap.height).toInt().coerceIn(0, bitmap.height - 1)
+        val width = ((box.x2 - box.x1) * bitmap.width).toInt().coerceAtLeast(1).coerceAtMost(bitmap.width - x1)
+        val height = ((box.y2 - box.y1) * bitmap.height).toInt().coerceAtLeast(1).coerceAtMost(bitmap.height - y1)
 
         return Bitmap.createBitmap(bitmap, x1, y1, width, height)
     }
@@ -505,17 +530,28 @@ class PhotoFragment : Fragment(), Detector.DetectorListener {
     }
 
     private fun showLoadingScreen() {
-        binding.loadingScreen.visibility = View.VISIBLE
+        binding.loadingScreen.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate().alpha(1f).setDuration(300).start()
+        }
         binding.imageView.visibility = View.INVISIBLE
         binding.overlay.visibility = View.INVISIBLE
     }
 
-    // Hide the loading screen
     private fun hideLoadingScreen() {
-        binding.loadingScreen.visibility = View.GONE
+        binding.loadingScreen.animate()
+            .alpha(0f)
+            .setDuration(300)
+            .withEndAction {
+                binding.loadingScreen.visibility = View.GONE
+            }
+            .start()
+
         binding.imageView.visibility = View.VISIBLE
         binding.overlay.visibility = View.VISIBLE
     }
+
 
     override fun onEmptyDetect() {
         Log.d("PhotoFragment", "No objects detected.")

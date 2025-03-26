@@ -1,5 +1,6 @@
 package com.thesis.sangkapp_ex.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
@@ -183,22 +185,27 @@ class HomeFragment : Fragment() {
 
         // Set up click listeners for the "Add Food" buttons
         addBreakfastButton.setOnClickListener {
-            addFoodItemToMeal("Breakfast", "Pancakes", "130g", "350", "50", "8", "5")
+            navigateToLogFoodFragment("Breakfast")
         }
 
         addLunchButton.setOnClickListener {
-            addFoodItemToMeal("Lunch", "Grilled Chicken", "150g", "400", "0", "35", "10")
+            navigateToLogFoodFragment("Lunch")
         }
 
         addDinnerButton.setOnClickListener {
-            addFoodItemToMeal("Dinner", "Steak", "200g", "500", "0", "40", "20")
+            navigateToLogFoodFragment("Dinner")
         }
 
         addSnacksButton.setOnClickListener {
-            addFoodItemToMeal("Snacks", "Apple", "200g", "80", "22", "0", "0")
+            navigateToLogFoodFragment("Snack")
         }
 
         return view
+    }
+
+    private fun navigateToLogFoodFragment(mealType: String) {
+        val action = HomeFragmentDirections.actionNavHomeToLogFoodFragment(mealType)
+        findNavController().navigate(action)
     }
 
     private fun fetchAndDisplayCalorieAllocations() {
@@ -272,19 +279,19 @@ class HomeFragment : Fragment() {
                             val mealType = document.getString("mealType") ?: continue
                             val foodName = document.getString("foodName") ?: ""
                             val foodQuantity = document.getString("foodQuantity") ?: ""
-                            val calories = document.getString("calories") ?: "0"
-                            val carbs = document.getString("carbs") ?: "0"
-                            val proteins = document.getString("proteins") ?: "0"
-                            val fats = document.getString("fats") ?: "0"
+                            val calories = document.getDouble("calories") ?: "0"
+                            val carbs = document.getDouble("carbs") ?: "0"
+                            val proteins = document.getDouble("proteins") ?: "0"
+                            val fats = document.getDouble("fats") ?: "0"
 
                             addFoodItemToMealFromFirestore(
                                 mealType,
                                 foodName,
                                 foodQuantity,
-                                calories,
-                                carbs,
-                                proteins,
-                                fats
+                                calories.toString(),
+                                carbs.toString(),
+                                proteins.toString(),
+                                fats.toString()
                             )
                         }
                     } else {
@@ -319,6 +326,7 @@ class HomeFragment : Fragment() {
         consumedFats = 0f
     }
 
+    @SuppressLint("SetTextI18n")
     private fun addFoodItemToMealFromFirestore(
         mealType: String,
         foodName: String,
@@ -340,8 +348,9 @@ class HomeFragment : Fragment() {
         // Ensure the parent container is not null
         if (parentContainer != null) {
             // Inflate the layout with the parent container
-            val foodItemView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.food_item, parentContainer, false)
+            val context = context ?: return
+            val inflater = LayoutInflater.from(context)
+            val foodItemView = inflater.inflate(R.layout.food_item, parentContainer, false)
 
             // Find the views inside the food item layout
             val foodNameTextView = foodItemView.findViewById<TextView>(R.id.foodName)
@@ -350,116 +359,23 @@ class HomeFragment : Fragment() {
 
             // Set the values to the respective views
             foodNameTextView.text = foodName
-            foodQuantityTextView.text = foodQuantity
-            foodCaloriesTextView.text = calories
+            foodQuantityTextView.text = "Servings ${foodQuantity}g"
+            val caloriesValueFormatted = String.format(Locale.getDefault(), "%.0f kcal", calories.toDoubleOrNull() ?: 0.0)
+            foodCaloriesTextView.text = caloriesValueFormatted
 
             // Add the view to the appropriate container
             parentContainer.addView(foodItemView)
 
             // Update consumed calories and nutrients
-            updateConsumedCalories(calories.toInt(), mealType)
-            updateConsumedNutrients(carbs.toFloat(), proteins.toFloat(), fats.toFloat())
+            val caloriesValue = calories.toDoubleOrNull()?.toInt() ?: 0
+            val carbsValue = carbs.toDoubleOrNull()?.toFloat() ?: 0f
+            val proteinsValue = proteins.toDoubleOrNull()?.toFloat() ?: 0f
+            val fatsValue = fats.toDoubleOrNull()?.toFloat() ?: 0f
+
+            updateConsumedCalories(caloriesValue, mealType)
+            updateConsumedNutrients(carbsValue, proteinsValue, fatsValue)
         } else {
             Log.e("HomeFragment", "Invalid meal type: $mealType")
-        }
-    }
-
-    private fun addFoodItemToMeal(
-        mealType: String,
-        foodName: String,
-        foodQuantity: String,
-        calories: String,
-        carbs: String,
-        proteins: String,
-        fats: String
-    ) {
-        // Existing code to add the food item to the UI and update the consumed calories and nutrients
-
-        // Determine the parent container based on meal type
-        val parentContainer = when (mealType) {
-            "Breakfast" -> breakfastFoodItemsContainer
-            "Lunch" -> lunchFoodItemsContainer
-            "Dinner" -> dinnerFoodItemsContainer
-            "Snacks" -> snacksFoodItemsContainer
-            else -> null
-        }
-
-        // Ensure the parent container is not null
-        if (parentContainer != null) {
-            // Inflate the layout with the parent container
-            val foodItemView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.food_item, parentContainer, false)
-
-            // Find the views inside the food item layout
-            val foodNameTextView = foodItemView.findViewById<TextView>(R.id.foodName)
-            val foodQuantityTextView = foodItemView.findViewById<TextView>(R.id.foodQuantity)
-            val foodCaloriesTextView = foodItemView.findViewById<TextView>(R.id.foodCalories)
-
-            // Set the values to the respective views
-            foodNameTextView.text = foodName
-            foodQuantityTextView.text = foodQuantity
-            foodCaloriesTextView.text = calories
-
-            // Add the view to the appropriate container
-            parentContainer.addView(foodItemView)
-
-            // Update consumed calories
-            updateConsumedCalories(calories.toInt(), mealType)
-
-            // Update consumed nutrients
-            updateConsumedNutrients(carbs.toFloat(), proteins.toFloat(), fats.toFloat())
-
-            // Save the food item to Firestore
-            saveFoodItemToFirestore(
-                mealType,
-                foodName,
-                foodQuantity,
-                calories,
-                carbs,
-                proteins,
-                fats
-            )
-        } else {
-            // Handle the case where the meal type is invalid
-            Log.e("HomeFragment", "Invalid meal type: $mealType")
-        }
-    }
-
-    private fun saveFoodItemToFirestore(
-        mealType: String,
-        foodName: String,
-        foodQuantity: String,
-        calories: String,
-        carbs: String,
-        proteins: String,
-        fats: String
-    ) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-        if (userId != null) {
-            val foodItemData = hashMapOf(
-                "mealType" to mealType,
-                "foodName" to foodName,
-                "foodQuantity" to foodQuantity,
-                "calories" to calories,
-                "carbs" to carbs,
-                "proteins" to proteins,
-                "fats" to fats,
-                "timestamp" to System.currentTimeMillis(),
-                "date" to dateFormatQuery.format(selectedDate)
-            )
-
-            db.collection("users").document(userId)
-                .collection("foodEntries")
-                .add(foodItemData)
-                .addOnSuccessListener { documentReference ->
-                    Log.d("HomeFragment", "Food item added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("HomeFragment", "Error adding food item", e)
-                }
-        } else {
-            Log.e("HomeFragment", "User is not authenticated")
         }
     }
 
@@ -531,14 +447,10 @@ class HomeFragment : Fragment() {
         // Update the progress bar on the main thread
         activity?.runOnUiThread {
             arcProgressBar.progress = clampedProgress
-            if (consumedCalories > totalCalories) {
-                arcProgressBar.progressColor =
-                    ContextCompat.getColor(requireContext(), R.color.red_600)
-            } else {
-                arcProgressBar.progressColor =
-                    ContextCompat.getColor(requireContext(), R.color.green_500)
-            }
+            val colorRes = if (consumedCalories > totalCalories) R.color.red_600 else R.color.green_500
+            arcProgressBar.progressColor = ContextCompat.getColor(context ?: return@runOnUiThread, colorRes)
         }
+
     }
 
     private fun updateConsumedNutrients(carbs: Float, proteins: Float, fats: Float) {

@@ -13,12 +13,21 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.thesis.sangkapp_ex.R
 import com.thesis.sangkapp_ex.ui.recipe.Recipe
 
-class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnRecipeSelectedListener {
+class LogFoodFragment : Fragment(),
+    LogMyRecipeFragment.OnRecipeSelectedListener,
+    LogFeaturedFragment.OnFeaturedSelectedListener {
 
     private lateinit var toggleGroup: MaterialButtonToggleGroup
     private lateinit var featuredButton: MaterialButton
     private lateinit var myRecipeButton: MaterialButton
     private lateinit var fragmentContainer: FrameLayout
+
+    private var mealType = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mealType = arguments?.getString("mealType") ?: ""
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,7 +43,14 @@ class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnRecipeSelectedListener
 
 
         if (savedInstanceState == null) {
-            replaceChildFragment(LogFeaturedFragment())
+            // ✅ Default load: Featured fragment with mealType as argument
+            val featuredFragment = LogFeaturedFragment().apply {
+                arguments = Bundle().apply {
+                    putString("mealType", mealType)
+                }
+            }
+            replaceChildFragment(featuredFragment)
+            updateButtonStyles(featuredButton, myRecipeButton)
         }
 
         // Handle button checked events
@@ -78,7 +94,21 @@ class LogFoodFragment : Fragment(), LogMyRecipeFragment.OnRecipeSelectedListener
     // Handle recipe selection and navigate to RecipeInfoFragment
     override fun onRecipeSelected(recipe: Recipe) {
         // Use SafeArgs to pass the selected recipe to RecipeInfoFragment
-        val action = LogFoodFragmentDirections.actionNavLogFoodToRecipeInfoFragment(recipe)
+        val action = LogFoodFragmentDirections
+            .actionNavLogFoodToLogMyRecipeInfoFragment(foodName = recipe, mealType = mealType)
+        findNavController().navigate(action)
+
+    }
+
+
+    override fun onFeaturedSelected(recipe: Recipe) {
+
+        val action = LogFoodFragmentDirections
+            .actionNavLogFoodToLogFeaturedInfoFragment(
+                foodName = recipe,
+                mealType = mealType
+            )
+
         findNavController().navigate(action)
     }
 }

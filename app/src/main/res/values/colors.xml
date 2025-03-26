@@ -25,6 +25,7 @@
     <color name="yellow_500">#FFF5BD</color>
     <color name="teal_800">#2b6669</color>
     <color name="red_600">#B83030</color>
+    <color name="black_overlay">#CC000000</color> <!-- 80% transparent black -->
 
 
 </resources>

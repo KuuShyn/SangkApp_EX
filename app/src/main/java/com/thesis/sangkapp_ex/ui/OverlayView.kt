@@ -60,8 +60,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             // Draw bounding box
             canvas.drawRect(left, top, right, bottom, boxPaint)
 
-            // Draw label text
-            val drawableText = it.clsName
+            // Draw label text with confidence score
+            val drawableText = "${it.clsName} ${(it.cnf * 100).toInt()}%"
             textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bounds)
             val textWidth = bounds.width()
             val textHeight = bounds.height()
@@ -82,9 +82,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         invalidate()
     }
 
-    fun getBoundingBoxes(): List<BoundingBox> {
-        return results
-    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {

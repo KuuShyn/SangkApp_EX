@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -62,23 +63,36 @@ class RecipeHistoryFragment : Fragment() {
     }
 
     private fun fetchRecipesFromFirestore() {
+        val userId = context?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            ?.getString("USER_ID", null)
+
+        if (userId == null) {
+            Log.e("RecipeHistory", "USER_ID not found in SharedPreferences ❌")
+            return
+        }
+
+
         // Listen for real-time updates
-        firestoreListener = firestore.collection("recipes")
+        firestoreListener = firestore.collection("users")
+            .document(userId)
+            .collection("recipes")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     Log.w("RecipeHistory", "Listen failed.", e)
                     return@addSnapshotListener
                 }
 
-                if (snapshots != null) {
+                if (snapshots != null && !snapshots.isEmpty) {
                     recipesList.clear()
                     for (doc in snapshots) {
                         val recipe = doc.toObject(Recipe::class.java)
                         recipesList.add(recipe)
                     }
                     recipeAdapter.notifyDataSetChanged()
+                    Log.d("RecipeHistory", "Fetched ${recipesList.size} recipes ✅")
                 } else {
-                    Log.d("RecipeHistory", "Current data: null")
+                    Log.d("RecipeHistory", "No recipes found 🍽️")
+                    Toast.makeText(requireContext(), "No recipes found", Toast.LENGTH_SHORT).show()
                 }
             }
     }

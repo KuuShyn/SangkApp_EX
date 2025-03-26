@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 import com.thesis.sangkapp_ex.R
 import com.thesis.sangkapp_ex.ui.recipe.Recipe
+import java.util.Locale
 
 class LogFoodAdapter(
     private val foodList: List<Recipe>, // List of recipes or food items
@@ -23,8 +24,10 @@ class LogFoodAdapter(
         // Bind data to each view
         fun bind(foodItem: Recipe) {
             foodNameTextView.text = foodItem.name
-            foodCaloriesTextView.text = "${foodItem.calories} calories"
 
+            val caloriesDouble = foodItem.calories // safely convert Number to Double
+            val caloriesValueFormatted = String.format(Locale.getDefault(), "%.0f kcal", caloriesDouble)
+            foodCaloriesTextView.text = caloriesValueFormatted
             // Set the image from drawable resources (resource ID stored in Recipe model)
             foodItem.imageResId?.let { foodImageView.setImageResource(it) }
 

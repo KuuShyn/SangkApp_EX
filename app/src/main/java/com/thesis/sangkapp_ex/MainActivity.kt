@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavOptions
 import com.thesis.sangkapp_ex.databinding.ActivityMainBinding
 import com.thesis.sangkapp_ex.ui.photo.PhotoViewModel
 
@@ -31,84 +32,85 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get camera calibration parameters
-        val cameraParams = getCameraCalibrationParams(this)
-        if (cameraParams != null) {
-            // Set camera parameters in ViewModel
-            photoViewModel.setCameraParams(cameraParams)
-        }
-
         setSupportActionBar(binding.appBarMain.toolbar)
 
-//        binding.appBarMain.fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null)
-//                .setAnchorView(R.id.fab).show()
-//        }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        // 🔐 Lock drawer for profile flow
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val isInProfileFlow = destination.id == R.id.profile_input || destination.id == R.id.profile_input2
+            binding.drawerLayout.setDrawerLockMode(
+                if (isInProfileFlow) DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+                else DrawerLayout.LOCK_MODE_UNLOCKED
+            )
+        }
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home,  R.id.nav_profile, R.id.nav_camera, R.id.nav_recipe, R.id.nav_log_food
+                R.id.nav_home, R.id.nav_profile, R.id.nav_camera, R.id.nav_recipe, R.id.nav_log_food
             ), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Handle fragment navigation based on intent extras
-        val fragmentToLoad = intent.getStringExtra("fragment")
-        if (fragmentToLoad == "profile_details") {
-            navController.navigate(R.id.nav_profile)  // Navigate to ProfileDetailsFragment
-        } else if (fragmentToLoad == "profile_input") {
-            navController.navigate(R.id.profile_input)  // Navigate to ProfileInputFragment
-        }
-    }
+        // 🔄 CAMERA CALIBRATION
+        getCameraCalibrationParams(this)?.let { photoViewModel.setCameraParams(it) }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.main, menu)
-//        return true
-//    }
+        // 🧠 USER PROFILE CHECK (first-time navigation)
+        val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val isProfileComplete = prefs.getBoolean("PROFILE_COMPLETE", false)
+
+        if (savedInstanceState == null) {
+            val fragmentToLoad = intent.getStringExtra("fragment")
+            when {
+                fragmentToLoad == "profile_details" -> {
+                    navController.navigate(R.id.nav_profile)
+                }
+                fragmentToLoad == "profile_input" -> {
+                    navController.navigate(R.id.profile_input)
+                }
+                isProfileComplete -> {
+                    val navOptions = NavOptions.Builder()
+                        .setPopUpTo(R.id.mobile_navigation, true)
+                        .build()
+                    navController.navigate(R.id.nav_home, null, navOptions)
+                }
+                else -> {
+                    navController.navigate(R.id.profile_input)
+                }
+            }
+        }
+
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    // Function to get camera calibration parameters
     private fun getCameraCalibrationParams(context: Context): CameraCalibrationParams? {
-        try {
-            // Access the camera manager
+        return try {
             val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-            val cameraIdList = cameraManager.cameraIdList
+            val backCameraId = cameraManager.cameraIdList.firstOrNull {
+                cameraManager.getCameraCharacteristics(it)
+                    .get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
+            }
 
-            // Loop through available cameras (back camera preferred)
-            for (cameraId in cameraIdList) {
+            backCameraId?.let { cameraId ->
                 val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+                val focalLength = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)?.getOrNull(0)
+                val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
 
-                // We are interested in the back-facing camera
-                val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
-                if (facing == CameraCharacteristics.LENS_FACING_BACK) {
-                    // Get the focal length
-                    val focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
-                    val focalLength = focalLengths?.get(0) ?: return null // Focal length in mm
-
-                    // Get the sensor physical size
-                    val sensorSize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
-                    val sensorWidth = sensorSize?.width ?: return null // Sensor width in mm
-                    val sensorHeight = sensorSize.height // Sensor height in mm
-
-                    // Return the calibration parameters
-                    return CameraCalibrationParams(focalLength, sensorWidth, sensorHeight)
-                }
+                if (focalLength != null && sensorSize != null) {
+                    CameraCalibrationParams(focalLength, sensorSize.width, sensorSize.height)
+                } else null
             }
         } catch (e: Exception) {
-            Log.e("CameraParams", "Error retrieving camera calibration parameters: ${e.localizedMessage}")
+            Log.e("CameraParams", "Error retrieving camera params: ${e.message}")
+            null
         }
-        return null
     }
-
 }

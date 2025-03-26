@@ -27,9 +27,8 @@ class LogMyRecipeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
 
     private val firestore = FirebaseFirestore.getInstance()
-    private var recipesList = mutableListOf<Recipe>()
-
     private var firestoreListener: ListenerRegistration? = null
+    private val recipesList = mutableListOf<Recipe>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -49,25 +48,35 @@ class LogMyRecipeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_log_my_recipe, container, false)
         recyclerView = view.findViewById(R.id.recipeRecyclerView)
 
-        // Initialize RecyclerView
         recipeAdapter = RecipeAdapter(recipesList) { selectedRecipe ->
             listener?.onRecipeSelected(selectedRecipe)
         }
+
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = recipeAdapter
 
-        // Fetch recipes from Firestore
         fetchRecipesFromFirestore()
 
         return view
     }
 
     private fun fetchRecipesFromFirestore() {
-        // Listen for real-time updates
-        firestoreListener = firestore.collection("recipes")
+        val userId = context
+            ?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            ?.getString("USER_ID", null)
+
+        if (userId == null) {
+            Log.w("LogMyRecipeFragment", "User ID not found in SharedPreferences ❌")
+            return
+        }
+
+        firestoreListener = firestore
+            .collection("users")
+            .document(userId)
+            .collection("recipes")
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
-                    Log.w("com.thesis.sangkapp_ex.ui.foodLog.LogMyRecipeFragment", "Listen failed.", e)
+                    Log.w("LogMyRecipeFragment", "Listen failed ❌", e)
                     return@addSnapshotListener
                 }
 
@@ -79,10 +88,8 @@ class LogMyRecipeFragment : Fragment() {
                     }
                     recipeAdapter.notifyDataSetChanged()
                 } else {
-                    Log.d("com.thesis.sangkapp_ex.ui.foodLog.LogMyRecipeFragment", "Current data: null")
+                    Log.d("LogMyRecipeFragment", "No recipe data found")
                 }
             }
     }
-
-
 }

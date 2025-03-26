@@ -74,7 +74,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.activity)
-
+    implementation(libs.gson)
 //    implementation(libs.litert.support.api)
 //    implementation(libs.litert)
 //    implementation(libs.litert.gpu)
@@ -84,4 +84,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

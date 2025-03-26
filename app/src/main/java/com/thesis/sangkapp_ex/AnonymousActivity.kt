@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import androidx.core.content.edit
 
 class AnonymousActivity : AppCompatActivity() {
 
@@ -43,7 +44,7 @@ class AnonymousActivity : AppCompatActivity() {
         // Check if the user is already signed in
         if (auth.currentUser != null) {
             // User is already signed in, show their UID in the welcome text
-            "Welcome back, user: ${auth.currentUser?.uid}".also { welcomeText.text = it }
+            "Welcome back, anonymous: ${auth.currentUser?.uid}".also { welcomeText.text = it }
             // Immediately check if the user has a profile
             checkUserProfile(auth.currentUser?.uid)
         } else {
@@ -69,9 +70,9 @@ class AnonymousActivity : AppCompatActivity() {
 
                     // Save user UID to SharedPreferences
                     val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.putString("USER_ID", userId)
-                    editor.apply()
+                    sharedPreferences.edit() {
+                        putString("USER_ID", userId)
+                    }
 
                     Toast.makeText(this, "Signed in as user: $userId", Toast.LENGTH_SHORT).show()
 
@@ -87,16 +88,21 @@ class AnonymousActivity : AppCompatActivity() {
     // Function to check if the user has a profile in Firestore
     private fun checkUserProfile(userId: String?) {
         if (userId != null) {
-            // Access Firestore to check if the profile exists
             db.collection("users").document(userId)
                 .collection("profile").document(userId)
                 .get()
                 .addOnSuccessListener { document ->
                     if (document.exists()) {
-                        // Profile exists, navigate to ProfileDetailsFragment
+                        // ✅ Profile exists, mark as complete in SharedPreferences
+                        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                        prefs.edit() { putBoolean("PROFILE_COMPLETE", true) }
+
                         navigateToProfileDetails()
                     } else {
-                        // Profile does not exist, navigate to ProfileInputFragment
+                        // 🟡 Profile doesn't exist, mark as NOT complete
+                        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                        prefs.edit() { putBoolean("PROFILE_COMPLETE", false) }
+
                         navigateToProfileInput()
                     }
                 }
@@ -106,14 +112,18 @@ class AnonymousActivity : AppCompatActivity() {
         }
     }
 
+
     // Navigate to ProfileDetailsFragment
+
     private fun navigateToProfileDetails() {
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val isComplete = prefs.getBoolean("PROFILE_COMPLETE", false)
+
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("fragment", "profile_details")
+        intent.putExtra("fragment", if (isComplete) "nav_home" else "profile_input")
         startActivity(intent)
         finish()
     }
-
     // Navigate to ProfileInputFragment
     private fun navigateToProfileInput() {
         val intent = Intent(this, MainActivity::class.java)

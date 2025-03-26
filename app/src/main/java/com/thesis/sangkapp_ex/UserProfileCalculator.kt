@@ -44,6 +44,10 @@ class UserProfileCalculator(private val context: Context) {
                     val ter = computeTer(ibw)
                     val weightChangeMode = defineWeightChangeMode(bmiCategory)
 
+                    val carbs = ((ter * 0.6) / 4).toInt()
+                    val protein = ((ter * 0.15) / 4).toInt()
+                    val fat = ((ter * 0.25) / 9).toInt()
+
                     return UserProfile(
                         name = name,
                         age = age,
@@ -56,9 +60,10 @@ class UserProfileCalculator(private val context: Context) {
                         idealBodyWeight = ibw,
                         weightChangeMode = weightChangeMode,
                         calories = ter,
-                        carbs = 307,    // Placeholder values; replace with actual data
-                        protein = 71,    // Placeholder values; replace with actual data
-                        fat = 52,        // Placeholder values; replace with actual data
+                        carbs = carbs,
+                        protein = protein,
+                        fat = fat
+
 
                     )
                 } else {

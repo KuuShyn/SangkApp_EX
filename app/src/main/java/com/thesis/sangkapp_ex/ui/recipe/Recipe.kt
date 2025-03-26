@@ -8,7 +8,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 @Parcelize
 data class Recipe(
     val name: String = "",
-    val calories: Int = 1,
+    val calories: Double = 0.0,
     val servings: Int = 1,
     val ingredients: List<Ingredient> = listOf(),
     val nutrients: Nutrients = Nutrients(),
