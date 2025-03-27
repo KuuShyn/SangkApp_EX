@@ -8,23 +8,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.thesis.sangkapp_ex.R
 
 class RecipeAdapter(
-    private val recipeList: List<Recipe>,
-    private val onItemClick: (Recipe) -> Unit
+    private val recipeList: MutableList<Recipe>,
+    private val onItemClick: (Recipe) -> Unit,
+    private val onDeleteClick: (Recipe) -> Unit = {} // <-- default empty lambda
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTextView: TextView = itemView.findViewById(R.id.recipeName)
         private val quantityTextView: TextView = itemView.findViewById(R.id.recipeQuantity)
         private val caloriesTextView: TextView = itemView.findViewById(R.id.recipeCalories)
+        private val deleteButton: View = itemView.findViewById(R.id.deleteFoodButton)
 
         fun bind(recipe: Recipe) {
             nameTextView.text = recipe.name
             "${recipe.calories} kcal".also { caloriesTextView.text = it }
             "${recipe.servings} g".also { quantityTextView.text = it }
 
-            itemView.setOnClickListener {
-                onItemClick(recipe)
+            itemView.setOnClickListener { onItemClick(recipe) }
+
+            deleteButton.setOnClickListener {
+                onDeleteClick(recipe)
             }
+
         }
     }
 
@@ -35,11 +40,8 @@ class RecipeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val recipe = recipeList[position]
-        holder.bind(recipe)
+        holder.bind(recipeList[position])
     }
 
-    override fun getItemCount(): Int {
-        return recipeList.size
-    }
+    override fun getItemCount(): Int = recipeList.size
 }

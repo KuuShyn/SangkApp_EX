@@ -50,9 +50,26 @@ class RecipeHistoryFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recipeRecyclerView)
 
         // Initialize RecyclerView
-        recipeAdapter = RecipeAdapter(recipesList) { selectedRecipe ->
-            listener?.onRecipeSelected(selectedRecipe)
-        }
+        recipeAdapter = RecipeAdapter(
+            recipesList,
+            onItemClick = { selectedRecipe ->
+                listener?.onRecipeSelected(selectedRecipe)
+            },
+            onDeleteClick = { recipe ->
+                // Show confirmation dialog before deletion
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Recipe")
+                    .setMessage("Are you sure you want to delete \"${recipe.name}\"?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        deleteRecipeFromFirestore(recipe)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+
+        )
+
+
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = recipeAdapter
 
@@ -96,4 +113,31 @@ class RecipeHistoryFragment : Fragment() {
                 }
             }
     }
+
+    private fun deleteRecipeFromFirestore(recipe: Recipe) {
+        val userId = context?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            ?.getString("USER_ID", null) ?: return
+
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(userId)
+            .collection("recipes")
+            .whereEqualTo("name", recipe.name)
+            .whereEqualTo("calories", recipe.calories)
+            .whereEqualTo("servings", recipe.servings)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (!snapshot.isEmpty) {
+                    snapshot.documents[0].reference.delete()
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Recipe deleted ✅", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Failed to delete ❌", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+    }
+
 }

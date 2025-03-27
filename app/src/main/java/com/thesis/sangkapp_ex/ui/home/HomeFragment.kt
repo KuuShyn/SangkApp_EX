@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -374,10 +375,57 @@ class HomeFragment : Fragment() {
 
             updateConsumedCalories(caloriesValue, mealType)
             updateConsumedNutrients(carbsValue, proteinsValue, fatsValue)
+
+            val deleteButton = foodItemView.findViewById<ImageButton>(R.id.deleteFoodButton)
+
+            deleteButton.setOnClickListener {
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
+                val dateString = dateFormatQuery.format(selectedDate)
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Entry")
+                    .setMessage("Are you sure you want to remove \"$foodName\" from your $mealType?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        deleteFoodEntryFromFirestore(userId, dateString, mealType, foodName, foodQuantity)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+
+
         } else {
             Log.e("HomeFragment", "Invalid meal type: $mealType")
         }
     }
+
+    private fun deleteFoodEntryFromFirestore(
+        userId: String,
+        dateString: String,
+        mealType: String,
+        foodName: String,
+        foodQuantity: String
+    ) {
+        Firebase.firestore.collection("users")
+            .document(userId)
+            .collection("foodEntries")
+            .whereEqualTo("date", dateString)
+            .whereEqualTo("mealType", mealType)
+            .whereEqualTo("foodName", foodName)
+            .whereEqualTo("foodQuantity", foodQuantity)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val document = querySnapshot.documents[0]
+                    document.reference.delete().addOnSuccessListener {
+                        Log.d("HomeFragment", "Deleted $foodName from $mealType")
+                        fetchAndDisplayFoodEntries()
+                    }.addOnFailureListener { e ->
+                        Log.e("HomeFragment", "Error deleting food item", e)
+                    }
+                }
+            }
+    }
+
 
     private fun updateConsumedCalories(addedCalories: Int, mealType: String) {
         consumedCalories += addedCalories
